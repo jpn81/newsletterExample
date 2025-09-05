@@ -5,29 +5,21 @@
       "slug": "phev-12v-basics",
       "title": "Does the 12V Battery Charge on a PHEV?",
       "date": "20250905",
-      "categories": [
-        "tips",
-        "ev"
-      ],
-      "tags": [
-        "PHEV",
-        "12V",
-        "charging",
-        "battery"
-      ],
+      "categories": ["tips","ev"],
+      "tags": ["PHEV","12V","charging","battery"],
       "featured": true,
-      "hero": null,
+      "hero": "/assets/img/phev-12v.jpg",
       "summary": "A quick explainer on how the 12V system is maintained on plug-in hybrids."
     },
     {
-    "slug": "marvelous-feature-unveiled",
-    "title": "A Marvelous Feature Unveiled",
-    "date": "20250905",
-    "categories": ["Technology", "Innovation"],
-    "tags": ["feature", "innovation", "future", "technology", "release"],
-    "featured": true,
-    "hero": "/assets/img/marvelous-feature.jpg",
-    "summary": "A groundbreaking new feature has been revealed, promising to reshape the way we interact with technology."
-  }
+      "slug": "marvelous-feature-unveiled",
+      "title": "A Marvelous Feature Unveiled",
+      "date": "20250905",
+      "categories": ["technology","innovation"],
+      "tags": ["feature","innovation","future","technology","release"],
+      "featured": true,
+      "hero": "/assets/img/marvelous-feature.jpg",
+      "summary": "A groundbreaking new feature has been revealed..."
+    }
   ]
 }
