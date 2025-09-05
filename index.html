@@ -1,1 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>News | Competence Development</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    .date{font-size:.85rem;color:#6c757d}
+    .tag{cursor:pointer}
+    .badge-star::before{content:"★ ";margin-right:.25rem}
+  </style>
+</head>
+<body class="bg-light">
+  <nav class="navbar navbar-expand bg-white border-bottom">
+    <div class="container">
+      <a class="navbar-brand fw-semibold" href="#">Volvo</a>
+      <span class="navbar-text">Competence Development</span>
+    </div>
+  </nav>
+
+  <main class="container py-4">
+    <div class="row g-3 align-items-center">
+      <div class="col-md-6">
+        <input id="search" class="form-control" type="search" placeholder="Search articles or #tags…">
+      </div>
+      <div class="col-md-6 text-md-end" id="tag-bar"></div>
+    </div>
+    <hr class="my-4">
+    <div id="grid" class="row g-4"></div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2"></script>
+  <script>
+    const state = { data: [], tags: new Set(), activeTags: new Set(), fuse: null };
+    const formatDate = d => `${d.slice(0,4)}-${d.slice(4,6)}-${d.slice(6,8)}`;
+    const byDate = (a,b)=> b.date.localeCompare(a.date) || a.title.localeCompare(b.title);
+
+    async function load() {
+      const res = await fetch('./data/index.json', {cache:'no-store'});
+      const json = await res.json();
+      state.data = json.articles.sort(byDate);
+      state.data.forEach(a => [...(a.categories||[]), ...(a.tags||[])].forEach(t => state.tags.add(t)));
+      renderTags();
+      state.fuse = new Fuse(state.data, { keys:['title','summary','categories','tags'], threshold:0.35, ignoreLocation:true });
+      document.getElementById('search').addEventListener('input', applyFilters);
+      renderCards(state.data);
+    }
+
+    function renderTags(){
+      const bar = document.getElementById('tag-bar'); bar.innerHTML='';
+      [...state.tags].sort().forEach(tag=>{
+        const el = document.createElement('span');
+        el.className='badge rounded-pill text-bg-secondary me-2 tag';
+        el.textContent = `#${tag}`;
+        el.onclick = () => { 
+          if(state.activeTags.has(tag)){ state.activeTags.delete(tag); el.classList.replace('text-bg-primary','text-bg-secondary'); }
+          else { state.activeTags.add(tag); el.classList.replace('text-bg-secondary','text-bg-primary'); }
+          applyFilters();
+        };
+        bar.appendChild(el);
+      });
+    }
+
+    function applyFilters(){
+      const q = document.getElementById('search').value.trim();
+      let list = q ? state.fuse.search(q).map(r=>r.item) : [...state.data];
+      if(state.activeTags.size){
+        list = list.filter(a=>{
+          const all = new Set([...(a.categories||[]), ...(a.tags||[])]);
+          return [...state.activeTags].every(t=>all.has(t));
+        });
+      }
+      renderCards(list);
+    }
+
+    function renderCards(list){
+      const grid = document.getElementById('grid'); grid.innerHTML='';
+      [...list].sort((a,b)=> (b.featured - a.featured) || byDate(a,b)).forEach(a=>{
+        const col=document.createElement('div'); col.className='col-12 col-md-6 col-lg-4';
+        col.innerHTML = `
+          <div class="card h-100 shadow-sm">
+            ${a.hero ? `<img src="${a.hero}" class="card-img-top" alt="">` : ``}
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-start">
+                <h5 class="card-title ${a.featured?'badge-star':''}">${a.title}</h5>
+                <span class="date">${formatDate(a.date)}</span>
+              </div>
+              <p class="card-text">${a.summary||''}</p>
+              <div class="mb-2">
+                ${(a.categories||[]).map(c=>`<span class="badge text-bg-light border me-1">#${c}</span>`).join('')}
+              </div>
+              <a class="btn btn-sm btn-primary" href="./article.html?slug=${encodeURIComponent(a.slug)}">Read</a>
+            </div>
+          </div>`;
+        grid.appendChild(col);
+      });
+    }
+
+    load();
+  </script>
+</body>
+</html>
 
