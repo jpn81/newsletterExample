@@ -1,1 +1,16 @@
+{
+  "generatedAt": "2025-09-05T12:00:00Z",
+  "articles": [
+    {
+      "slug": "hello-world",
+      "title": "Hello, Newsletter!",
+      "date": "20250905",
+      "categories": ["getting-started"],
+      "tags": ["intro","demo"],
+      "featured": true,
+      "hero": null,
+      "summary": "Your very first article. It shows how listing and routing work."
+    }
+  ]
+}
 
