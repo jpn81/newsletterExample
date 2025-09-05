@@ -2,15 +2,22 @@
   "generatedAt": "2025-09-05T12:00:00Z",
   "articles": [
     {
-      "slug": "hello-world",
-      "title": "Hello, Newsletter!",
+      "slug": "phev-12v-basics",
+      "title": "Does the 12V Battery Charge on a PHEV?",
       "date": "20250905",
-      "categories": ["getting-started"],
-      "tags": ["intro","demo"],
+      "categories": [
+        "tips",
+        "ev"
+      ],
+      "tags": [
+        "PHEV",
+        "12V",
+        "charging",
+        "battery"
+      ],
       "featured": true,
       "hero": null,
-      "summary": "Your very first article. It shows how listing and routing work."
+      "summary": "A quick explainer on how the 12V system is maintained on plug-in hybrids."
     }
   ]
 }
-

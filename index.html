@@ -90,7 +90,7 @@
               <div class="mb-2">
                 ${(a.categories||[]).map(c=>`<span class="badge text-bg-light border me-1">#${c}</span>`).join('')}
               </div>
-              <a class="btn btn-sm btn-primary" href="./article.html?slug=${encodeURIComponent(a.slug)}">Read</a>
+              <a class="btn btn-sm btn-primary" href="./article.html?slug=${encodeURIComponent(a.slug)}&lang=en">Read</a>
             </div>
           </div>`;
         grid.appendChild(col);
@@ -101,4 +101,3 @@
   </script>
 </body>
 </html>
-

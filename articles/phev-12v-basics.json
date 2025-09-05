@@ -1,0 +1,78 @@
+{
+  "slug": "phev-12v-basics",
+  "date": "20250905",
+  "featured": true,
+  "categories": [
+    "tips",
+    "ev"
+  ],
+  "tags": [
+    "PHEV",
+    "12V",
+    "charging",
+    "battery"
+  ],
+  "hero": {
+    "image": "/assets/img/phev-12v.jpg",
+    "alt": {
+      "en": "Close-up of a PHEV 12V battery",
+      "sv": "Närbild av ett PHEV 12V-batteri"
+    }
+  },
+  "locales": {
+    "en": {
+      "title": "Does the 12V Battery Charge on a PHEV?",
+      "summary": "A quick explainer on how the 12V system is maintained on plug-in hybrids.",
+      "body": [
+        {
+          "type": "p",
+          "text": "On most PHEVs, the 12V battery is charged via a DC/DC converter from the high-voltage pack while the car is on or charging."
+        },
+        {
+          "type": "h2",
+          "text": "How it works"
+        },
+        {
+          "type": "ul",
+          "items": [
+            "12V powers accessories and ECUs",
+            "DC/DC converter keeps it topped up",
+            "Charging behavior may vary by brand/model"
+          ]
+        },
+        {
+          "type": "link",
+          "href": "https://example.com/phev-12v",
+          "text": "Further reading"
+        }
+      ]
+    },
+    "sv": {
+      "title": "Laddas 12V-batteriet på en PHEV?",
+      "summary": "En snabb förklaring av hur 12V-systemet underhålls på laddhybrider.",
+      "body": [
+        {
+          "type": "p",
+          "text": "På de flesta PHEV laddas 12V-batteriet via en DC/DC-omvandlare från högvoltsbatteriet när bilen är på eller laddas."
+        },
+        {
+          "type": "h2",
+          "text": "Så fungerar det"
+        },
+        {
+          "type": "ul",
+          "items": [
+            "12V driver tillbehör och styrenheter",
+            "DC/DC-omvandlaren håller nivån",
+            "Beteendet kan variera mellan märken/modeller"
+          ]
+        },
+        {
+          "type": "link",
+          "href": "https://example.com/phev-12v",
+          "text": "Läs mer"
+        }
+      ]
+    }
+  }
+}

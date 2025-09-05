@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <title>Article | Competence Development</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    .date{font-size:.9rem;color:#6c757d}
+    .badge-star::before{content:"★ ";margin-right:.25rem}
+  </style>
+</head>
+<body class="bg-light">
+  <nav class="navbar bg-white border-bottom">
+    <div class="container">
+      <a class="navbar-brand fw-semibold" href="./">Volvo</a>
+      <span class="navbar-text">Competence Development</span>
+    </div>
+  </nav>
+
+  <main class="container py-4">
+    <article id="article" class="mx-auto" style="max-width: 860px;"></article>
+  </main>
+
+  <script>
+    const qs = new URLSearchParams(location.search);
+    const slug = qs.get('slug');
+    const lang = (qs.get('lang') || 'en').toLowerCase();
+    const fmt = d => `${d.slice(0,4)}-${d.slice(4,6)}-${d.slice(6,8)}`;
+
+    async function load(){
+      if(!slug){ return setHTML('<p>Missing ?slug=…</p>'); }
+      const r = await fetch(`./articles/${slug}.json`, {cache:'no-store'});
+      if(!r.ok){ return setHTML('<p>Article not found.</p>'); }
+      const data = await r.json();
+      render(data, lang);
+    }
+
+    function setHTML(html){ document.getElementById('article').innerHTML = html; }
+    function esc(s=''){ return String(s).replace(/[&<>]/g, m=>({ '&':'&amp;','<':'&lt;','>':'&gt;' }[m])); }
+
+    function render(a, lang) {
+      const L = a.locales?.[lang] || a.locales?.en || (a.locales ? Object.values(a.locales)[0] : null);
+      if(!L){ return setHTML('<p>Missing locales in article JSON.</p>'); }
+      const alt = typeof a.hero?.alt === 'object' ? (a.hero.alt[lang] || a.hero.alt.en || '') : (a.hero?.alt || '');
+
+      const head = `
+        <header class="mb-3">
+          <h1 class="h3 ${a.featured?'badge-star':''}">${esc(L.title||'Untitled')}</h1>
+          <div class="date">${fmt(a.date||'')}</div>
+          <div class="mt-2">${(a.categories||[]).map(c=>`<span class="badge text-bg-light border me-1">#${esc(c)}</span>`).join('')}</div>
+          ${a.hero?.image ? `<img class="img-fluid rounded mt-3" src="${esc(a.hero.image)}" alt="${esc(alt)}">` : ``}
+        </header>`;
+
+      const body = (L.body||[]).map(b=>{
+        switch(b.type){
+          case 'p':   return `<p>${esc(b.text||'')}</p>`;
+          case 'h2':  return `<h2 class="h5 mt-4">${esc(b.text||'')}</h2>`;
+          case 'img': return `<img class="img-fluid rounded my-3" src="${esc(b.src||'')}" alt="${esc(b.alt||'')}">`;
+          case 'video': return `<video controls class="w-100 my-3 rounded" src="${esc(b.src||'')}" ${b.poster?`poster="${esc(b.poster)}"`:''}></video>`;
+          case 'link': return `<p><a href="${esc(b.href||'#')}" target="_blank" rel="noopener">${esc(b.text||b.href||'link')}</a></p>`;
+          case 'embed': return `<div class="ratio ratio-16x9 my-3">${b.html||''}</div>`;
+          case 'ul':  return `<ul>${(b.items||[]).map(i=>`<li>${esc(i)}</li>`).join('')}</ul>`;
+          default:    return '';
+        }
+      }).join('\n');
+
+      setHTML(head + body + `<hr class="my-4"><p><a href="./">← Back to News</a></p>`);
+    }
+
+    load();
+  </script>
+</body>
+</html>
