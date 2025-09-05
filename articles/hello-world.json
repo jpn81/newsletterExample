@@ -1,1 +1,19 @@
+{
+  "slug": "hello-world",
+  "title": "Hello, Newsletter!",
+  "date": "20250905",
+  "author": "Competence Development",
+  "categories": ["getting-started"],
+  "tags": ["intro","demo"],
+  "featured": true,
+  "hero": { "image": "", "alt": "" },
+  "summary": "Your very first article. It shows how listing and routing work.",
+  "body": [
+    { "type": "p", "text": "Welcome to your static newsletter. This page is rendered from JSON." },
+    { "type": "h2", "text": "Blocks you can use" },
+    { "type": "ul", "items": ["p (paragraph)", "h2 (subheading)", "img", "video", "link", "embed", "ul (bulleted list)"] },
+    { "type": "p", "text": "Try adding more blocks in the JSON and refresh the page." },
+    { "type": "link", "href": "https://example.com", "text": "Example external link" }
+  ]
+}
 
