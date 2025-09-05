@@ -1,78 +1,51 @@
-"article": {
-  "slug": "marvelous-feature-unveiled",
+{
+  "slug": "phev-12v-basics",
   "date": "20250905",
   "featured": true,
-  "categories": ["technology", "innovation"],
-  "tags": ["feature", "innovation", "future", "technology", "release"],
+  "categories": ["automotive", "ev"],
+  "tags": ["PHEV", "12V", "charging", "battery"],
   "hero": {
-    "image": "/assets/img/marvelous-feature.jpg",
+    "image": "/assets/img/placeholder-1200x630.jpg",
     "alt": {
-      "en": "Illustration of a futuristic interface showcasing the new marvelous feature",
-      "sv": "Illustration av ett futuristiskt gränssnitt som visar den nya fantastiska funktionen"
+      "en": "Placeholder image for article hero",
+      "sv": "Platshållarbild för artikelns topp"
     }
   },
   "locales": {
     "en": {
-      "title": "A Marvelous Feature Unveiled",
-      "summary": "A groundbreaking new feature has been revealed, promising to reshape the way we interact with technology.",
+      "title": "Does the 12V Battery Charge on a PHEV?",
+      "summary": "A quick explainer on how the 12V system is maintained on plug-in hybrids.",
       "body": [
         {
           "type": "p",
-          "text": "In a bold step forward, developers have introduced what they are calling the 'Marvelous Feature'—a tool designed to seamlessly integrate into daily workflows and bring futuristic efficiency to users everywhere."
+          "text": "On most PHEVs, the 12V battery is charged via a DC/DC converter from the high-voltage pack while the car is on or charging."
         },
         {
-          "type": "img",
-          "src": "/assets/img/marvelous-demo.jpg",
-          "alt": "Demo screen of the Marvelous Feature in action"
+          "type": "h2",
+          "text": "How it works"
         },
         {
-          "type": "p",
-          "text": "This new feature promises to enhance productivity by learning user preferences and adapting in real-time. Early testers have reported dramatic improvements in speed and ease of use."
-        },
-        {
-          "type": "p",
-          "text": "\"It's like having a personal assistant who knows what you need before you do.\""
-        },
-        {
-          "type": "p",
-          "text": "The Marvelous Feature will roll out globally later this year, with options for both personal and enterprise users. Developers are confident it will redefine expectations across industries."
+          "type": "ul",
+          "items": [
+            "12V powers accessories and ECUs",
+            "DC/DC converter keeps it topped up",
+            "Charging behavior varies by brand"
+          ]
         },
         {
           "type": "link",
-          "href": "https://example.com/marvelous-feature",
-          "text": "Read the official announcement"
+          "href": "https://example.com/phev-12v",
+          "text": "Further reading"
         }
       ]
     },
     "sv": {
-      "title": "En Fantastisk Funktion Avslöjad",
-      "summary": "En banbrytande ny funktion har avslöjats och lovar att omforma hur vi interagerar med teknik.",
+      "title": "Laddas 12V-batteriet på en PHEV?",
+      "summary": "En snabb förklaring av hur 12V-systemet underhålls på laddhybrider.",
       "body": [
         {
           "type": "p",
-          "text": "I ett djärvt steg framåt har utvecklare introducerat vad de kallar den 'Fantastiska Funktionen'—ett verktyg utformat för att sömlöst integreras i dagliga arbetsflöden och ge futuristisk effektivitet till användare överallt."
-        },
-        {
-          "type": "img",
-          "src": "/assets/img/marvelous-demo.jpg",
-          "alt": "Demoskärm av den Fantastiska Funktionen i aktion"
-        },
-        {
-          "type": "p",
-          "text": "Denna nya funktion lovar att förbättra produktiviteten genom att lära sig användarpreferenser och anpassa sig i realtid. Tidiga testare har rapporterat dramatiska förbättringar i hastighet och användarvänlighet."
-        },
-        {
-          "type": "p",
-          "text": "\"Det är som att ha en personlig assistent som vet vad du behöver innan du själv gör det.\""
-        },
-        {
-          "type": "p",
-          "text": "Den Fantastiska Funktionen kommer att lanseras globalt senare i år, med alternativ för både personliga och företagsanvändare. Utvecklarna är övertygade om att den kommer att omdefiniera förväntningar i olika branscher."
-        },
-        {
-          "type": "link",
-          "href": "https://example.com/marvelous-feature",
-          "text": "Läs det officiella tillkännagivandet"
+          "text": "På de flesta PHEV laddas 12V-batteriet via en DC/DC-omvandlare från högvoltsbatteriet när bilen är på eller laddas."
         }
       ]
     }
