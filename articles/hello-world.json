@@ -1,19 +1,53 @@
 {
-  "slug": "hello-world",
-  "title": "Hello, Newsletter!",
-  "date": "20250905",
-  "author": "Competence Development",
-  "categories": ["getting-started"],
-  "tags": ["intro","demo"],
-  "featured": true,
-  "hero": { "image": "", "alt": "" },
-  "summary": "Your very first article. It shows how listing and routing work.",
-  "body": [
-    { "type": "p", "text": "Welcome to your static newsletter. This page is rendered from JSON." },
-    { "type": "h2", "text": "Blocks you can use" },
-    { "type": "ul", "items": ["p (paragraph)", "h2 (subheading)", "img", "video", "link", "embed", "ul (bulleted list)"] },
-    { "type": "p", "text": "Try adding more blocks in the JSON and refresh the page." },
-    { "type": "link", "href": "https://example.com", "text": "Example external link" }
-  ]
+  "slug": "marvelous-feature-unveiled",
+  "date": "20250906",
+  "featured": false,
+  "categories": ["technology", "innovation"],
+  "tags": ["feature", "innovation", "future", "release"],
+  "hero": {
+    "image": "/assets/img/placeholder-1200x630.jpg",
+    "alt": {
+      "en": "Placeholder image for article hero",
+      "sv": "Platshållarbild för artikelns topp"
+    }
+  },
+  "locales": {
+    "en": {
+      "title": "A Marvelous Feature Unveiled",
+      "summary": "A groundbreaking feature has been revealed, reshaping how we interact with technology.",
+      "body": [
+        {
+          "type": "p",
+          "text": "In a bold step forward, developers have introduced the 'Marvelous Feature'—a tool designed to seamlessly integrate into workflows."
+        },
+        {
+          "type": "h2",
+          "text": "How it works"
+        },
+        {
+          "type": "ul",
+          "items": [
+            "Learns user preferences",
+            "Adapts in real time",
+            "Improves productivity"
+          ]
+        },
+        {
+          "type": "link",
+          "href": "https://example.com/marvelous-feature",
+          "text": "Read the official announcement"
+        }
+      ]
+    },
+    "sv": {
+      "title": "En Fantastisk Funktion Avslöjad",
+      "summary": "En banbrytande funktion har avslöjats som förändrar hur vi interagerar med teknik.",
+      "body": [
+        {
+          "type": "p",
+          "text": "Utvecklarna har introducerat den 'Fantastiska Funktionen'—ett verktyg som sömlöst integreras i arbetsflöden."
+        }
+      ]
+    }
+  }
 }
-
