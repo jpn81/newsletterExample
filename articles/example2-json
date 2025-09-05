@@ -1,1 +1,95 @@
+{
+  "slug": "new-reports-feature-with-filters",
+  "date": "20250905",
+  "featured": true,
+  "categories": ["product", "features"],
+  "tags": ["reports", "filters", "analytics", "productivity"],
+  "hero": {
+    "image": "/images/reports-feature-hero.jpg",
+    "alt": {
+      "en": "Illustration of reports with filters applied",
+      "sv": "Illustration av rapporter med filter tillämpade"
+    }
+  },
+  "locales": {
+    "en": {
+      "title": "New Reports Feature Unlocks Insights with Powerful Filters",
+      "summary": "The new reports feature offers a flexible way to analyze data, with filters that let you drill down to exactly what matters.",
+      "body": [
+        {
+          "type": "p",
+          "content": "We are excited to introduce the new reports feature, designed to help you gain deeper insights from your data. With customizable filters, you can focus on what’s most relevant to your work."
+        },
+        {
+          "type": "h2",
+          "content": "How Filters Work"
+        },
+        {
+          "type": "p",
+          "content": "Filters allow you to refine your report by selecting specific parameters such as date ranges, categories, user roles, or custom fields. You can combine multiple filters to create precise views."
+        },
+        {
+          "type": "ul",
+          "content": [
+            "Date filters let you view trends over time or focus on recent activity.",
+            "Category filters help isolate results from specific groups or projects.",
+            "User filters show activity by individual team members or departments."
+          ]
+        },
+        {
+          "type": "p",
+          "content": "Once applied, filters update the report instantly, making it easy to explore different perspectives without recreating your report."
+        },
+        {
+          "type": "img",
+          "src": "/images/report-filters-example.png",
+          "alt": "Screenshot showing a report with filters applied"
+        },
+        {
+          "type": "p",
+          "content": "This flexibility ensures you can uncover patterns, track performance, and make data-driven decisions with confidence."
+        }
+      ]
+    },
+    "sv": {
+      "title": "Nya rapportfunktionen ger insikter med kraftfulla filter",
+      "summary": "Den nya rapportfunktionen ger ett flexibelt sätt att analysera data, med filter som låter dig fokusera på det som är viktigast.",
+      "body": [
+        {
+          "type": "p",
+          "content": "Vi är glada att presentera den nya rapportfunktionen, utformad för att hjälpa dig att få djupare insikter från din data. Med anpassningsbara filter kan du rikta in dig på det som är mest relevant för ditt arbete."
+        },
+        {
+          "type": "h2",
+          "content": "Så fungerar filter"
+        },
+        {
+          "type": "p",
+          "content": "Filter gör att du kan förfina din rapport genom att välja specifika parametrar som datumintervall, kategorier, användarroller eller egna fält. Du kan kombinera flera filter för att skapa precisa vyer."
+        },
+        {
+          "type": "ul",
+          "content": [
+            "Datumfilter låter dig se trender över tid eller fokusera på senaste aktivitet.",
+            "Kategorifilter hjälper till att isolera resultat från specifika grupper eller projekt.",
+            "Användarfilter visar aktivitet per enskild teammedlem eller avdelning."
+          ]
+        },
+        {
+          "type": "p",
+          "content": "När de tillämpas uppdateras rapporten direkt, vilket gör det enkelt att utforska olika perspektiv utan att återskapa rapporten."
+        },
+        {
+          "type": "img",
+          "src": "/images/report-filters-example.png",
+          "alt": "Skärmbild som visar en rapport med filter tillämpade"
+        },
+        {
+          "type": "p",
+          "content": "Denna flexibilitet gör att du kan upptäcka mönster, följa upp resultat och fatta datadrivna beslut med självförtroende."
+        }
+      ]
+    }
+  }
+}
 
