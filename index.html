@@ -28,32 +28,87 @@
     </div>
     <hr class="my-4">
     <div id="grid" class="row g-4"></div>
+    <div id="status" class="text-center text-muted small mt-3"></div>
   </main>
 
   <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2"></script>
   <script>
-    const state = { data: [], tags: new Set(), activeTags: new Set(), fuse: null };
-    const formatDate = d => `${d.slice(0,4)}-${d.slice(4,6)}-${d.slice(6,8)}`;
-    const byDate = (a,b)=> b.date.localeCompare(a.date) || a.title.localeCompare(b.title);
+    // ------- CONFIG / FALLBACKS --------
+    // If NOT on GitHub Pages or you hit API limits, set SLUGS manually:
+    // const SLUGS = ['phev-12v-basics','marvelous-feature-unveiled'];
+    const SLUGS = null; // keep null to auto-discover on GitHub Pages
 
-    async function load() {
-      const res = await fetch('./data/index.json', {cache:'no-store'});
-      const json = await res.json();
-      state.data = json.articles.sort(byDate);
-      state.data.forEach(a => [...(a.categories||[]), ...(a.tags||[])].forEach(t => state.tags.add(t)));
-      renderTags();
-      state.fuse = new Fuse(state.data, { keys:['title','summary','categories','tags'], threshold:0.35, ignoreLocation:true });
-      document.getElementById('search').addEventListener('input', applyFilters);
-      renderCards(state.data);
+    // Prefer English for listing; change to 'sv' to show Swedish titles/summaries.
+    const LIST_LANG = 'en';
+
+    // ------- HELPERS --------
+    const state = { data: [], tags: new Set(), activeTags: new Set(), fuse: null };
+    const byDate = (a,b)=> b.date.localeCompare(a.date) || a.title.localeCompare(b.title);
+    const formatDate = d => `${d.slice(0,4)}-${d.slice(4,6)}-${d.slice(6,8)}`;
+    const setStatus = msg => document.getElementById('status').textContent = msg ?? '';
+
+    function detectGhRepo() {
+      // Works for https://<user>.github.io/<repo>/*
+      const host = location.host;
+      const path = location.pathname.split('/').filter(Boolean);
+      if (!/github\.io$/.test(host) || path.length === 0) return null;
+      const username = host.split('.')[0];
+      const repo = path[0];
+      const branch = 'main'; // change if your default branch is different
+      return { username, repo, branch };
+    }
+
+    // Fetch list of article filenames from GitHub API
+    async function ghListArticles({username, repo, branch}) {
+      const url = `https://api.github.com/repos/${username}/${repo}/contents/articles?ref=${encodeURIComponent(branch)}`;
+      const res = await fetch(url, { headers: { 'Accept': 'application/vnd.github+json' }});
+      if (!res.ok) throw new Error(`GitHub API ${res.status}`);
+      const files = await res.json();
+      return files
+        .filter(f => f.type === 'file' && f.name.endsWith('.json'))
+        .map(f => f.name.replace(/\.json$/,''));
+    }
+
+    // Fetch a single article JSON (prefer site-relative; fallback to raw GH)
+    async function fetchArticle(slug, gh) {
+      // Try site-relative first (works on GitHub Pages and SWA)
+      try {
+        const r = await fetch(`./articles/${slug}.json`, { cache: 'no-store' });
+        if (r.ok) return await r.json();
+      } catch (_) {}
+      // Fallback to raw.githubusercontent (only if gh info present)
+      if (gh) {
+        const raw = `https://raw.githubusercontent.com/${gh.username}/${gh.repo}/${gh.branch}/articles/${slug}.json`;
+        const r2 = await fetch(raw, { cache: 'no-store' });
+        if (r2.ok) return await r2.json();
+      }
+      throw new Error(`Article ${slug} not found`);
+    }
+
+    function articleToMeta(a) {
+      const L = a.locales?.[LIST_LANG] || a.locales?.en || Object.values(a.locales||{})[0] || {};
+      const cats = a.categories || [];
+      const tags = a.tags || [];
+      const hero = typeof a.hero?.image === 'string' ? a.hero.image : null;
+      return {
+        slug: a.slug,
+        title: L.title || a.slug,
+        date: a.date || '19700101',
+        categories: cats,
+        tags: tags,
+        featured: !!a.featured,
+        hero,
+        summary: L.summary || ''
+      };
     }
 
     function renderTags(){
       const bar = document.getElementById('tag-bar'); bar.innerHTML='';
-      [...state.tags].sort().forEach(tag=>{
+      [...state.tags].sort((a,b)=>a.localeCompare(b,'en',{sensitivity:'base'})).forEach(tag=>{
         const el = document.createElement('span');
         el.className='badge rounded-pill text-bg-secondary me-2 tag';
         el.textContent = `#${tag}`;
-        el.onclick = () => { 
+        el.onclick = () => {
           if(state.activeTags.has(tag)){ state.activeTags.delete(tag); el.classList.replace('text-bg-primary','text-bg-secondary'); }
           else { state.activeTags.add(tag); el.classList.replace('text-bg-secondary','text-bg-primary'); }
           applyFilters();
@@ -65,10 +120,10 @@
     function applyFilters(){
       const q = document.getElementById('search').value.trim();
       let list = q ? state.fuse.search(q).map(r=>r.item) : [...state.data];
-      if(state.activeTags.size){
-        list = list.filter(a=>{
+      if (state.activeTags.size) {
+        list = list.filter(a => {
           const all = new Set([...(a.categories||[]), ...(a.tags||[])]);
-          return [...state.activeTags].every(t=>all.has(t));
+          return [...state.activeTags].every(t => all.has(t));
         });
       }
       renderCards(list);
@@ -90,11 +145,55 @@
               <div class="mb-2">
                 ${(a.categories||[]).map(c=>`<span class="badge text-bg-light border me-1">#${c}</span>`).join('')}
               </div>
-              <a class="btn btn-sm btn-primary" href="./article.html?slug=${encodeURIComponent(a.slug)}&lang=en">Read</a>
+              <a class="btn btn-sm btn-primary" href="./article.html?slug=${encodeURIComponent(a.slug)}&lang=${encodeURIComponent(LIST_LANG)}">Read</a>
             </div>
           </div>`;
         grid.appendChild(col);
       });
+      setStatus(list.length ? '' : 'No articles match your filters.');
+    }
+
+    async function load() {
+      setStatus('Loading articles…');
+      let gh = null, slugs = SLUGS;
+      if (!slugs) {
+        gh = detectGhRepo();
+        if (gh) {
+          try {
+            slugs = await ghListArticles(gh);
+          } catch (e) {
+            // API failed (private repo or rate limit) — fall back to manual list
+            console.warn('GitHub API fallback:', e);
+            slugs = []; // Leave empty → show helpful status
+            setStatus('Could not auto-discover articles. Set SLUGS in index.html.');
+          }
+        } else {
+          // Not on GitHub Pages
+          slugs = []; // Set your manual list above
+          setStatus('Not on GitHub Pages. Set SLUGS in index.html.');
+        }
+      }
+
+      // Fetch all articles and build metadata
+      const metas = [];
+      for (const slug of slugs) {
+        try {
+          const a = await fetchArticle(slug, gh);
+          const meta = articleToMeta(a);
+          metas.push(meta);
+          // collect tags
+          [...(meta.categories||[]), ...(meta.tags||[])].forEach(t => state.tags.add(t));
+        } catch (e) {
+          console.warn('Failed to load', slug, e);
+        }
+      }
+
+      state.data = metas.sort(byDate);
+      renderTags();
+      state.fuse = new Fuse(state.data, { keys:['title','summary','categories','tags'], threshold:0.35, ignoreLocation:true });
+      document.getElementById('search').addEventListener('input', applyFilters);
+      renderCards(state.data);
+      setStatus('');
     }
 
     load();
