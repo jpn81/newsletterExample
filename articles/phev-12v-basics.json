@@ -1,76 +1,51 @@
 {
-  "slug": "phev-12v-basics",
-  "date": "20250905",
-  "featured": true,
-  "categories": [
-    "tips",
-    "ev"
-  ],
-  "tags": [
-    "PHEV",
-    "12V",
-    "charging",
-    "battery"
-  ],
+  "slug": "ai-in-dealership-training",
+  "date": "20250907",
+  "featured": false,
+  "categories": ["training", "ai"],
+  "tags": ["AI", "dealership", "training", "learning"],
   "hero": {
-    "image": "/assets/img/placeholder-1200x630.jpg",,
+    "image": "/assets/img/placeholder-1200x630.jpg",
     "alt": {
-      "en": "Close-up of a PHEV 12V battery",
-      "sv": "Närbild av ett PHEV 12V-batteri"
+      "en": "Placeholder image for article hero",
+      "sv": "Platshållarbild för artikelns topp"
     }
   },
   "locales": {
     "en": {
-      "title": "Does the 12V Battery Charge on a PHEV?",
-      "summary": "A quick explainer on how the 12V system is maintained on plug-in hybrids.",
+      "title": "AI in Dealership Training",
+      "summary": "Artificial intelligence is starting to transform how dealership staff are trained and supported.",
       "body": [
         {
           "type": "p",
-          "text": "On most PHEVs, the 12V battery is charged via a DC/DC converter from the high-voltage pack while the car is on or charging."
+          "text": "AI can personalize training by analyzing learning styles and performance, ensuring employees get the most relevant content."
         },
         {
           "type": "h2",
-          "text": "How it works"
+          "text": "Key benefits"
         },
         {
           "type": "ul",
           "items": [
-            "12V powers accessories and ECUs",
-            "DC/DC converter keeps it topped up",
-            "Charging behavior may vary by brand/model"
+            "Adaptive learning paths",
+            "Real-time knowledge checks",
+            "Automated feedback loops"
           ]
         },
         {
           "type": "link",
-          "href": "https://example.com/phev-12v",
-          "text": "Further reading"
+          "href": "https://example.com/ai-dealership-training",
+          "text": "Explore more on AI in training"
         }
       ]
     },
     "sv": {
-      "title": "Laddas 12V-batteriet på en PHEV?",
-      "summary": "En snabb förklaring av hur 12V-systemet underhålls på laddhybrider.",
+      "title": "AI i återförsäljarutbildning",
+      "summary": "Artificiell intelligens börjar förändra hur återförsäljare utbildas och får stöd.",
       "body": [
         {
           "type": "p",
-          "text": "På de flesta PHEV laddas 12V-batteriet via en DC/DC-omvandlare från högvoltsbatteriet när bilen är på eller laddas."
-        },
-        {
-          "type": "h2",
-          "text": "Så fungerar det"
-        },
-        {
-          "type": "ul",
-          "items": [
-            "12V driver tillbehör och styrenheter",
-            "DC/DC-omvandlaren håller nivån",
-            "Beteendet kan variera mellan märken/modeller"
-          ]
-        },
-        {
-          "type": "link",
-          "href": "https://example.com/phev-12v",
-          "text": "Läs mer"
+          "text": "AI kan anpassa utbildning genom att analysera inlärningsstilar och prestationer, vilket säkerställer att medarbetare får det mest relevanta innehållet."
         }
       ]
     }
