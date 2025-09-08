@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Article</title>
   <style>
-    :root{--brand:#081A35;--text:#0f172a;--muted:#475569;--line:#e5e7eb;--bg:#fff}
-    .page{font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,Noto Sans,"Apple Color Emoji","Segoe UI Emoji";color:var(--text);background:var(--bg)}
+    :root{--brand:#081A35;--text:#0f172a;--muted:#475569;--line:#e5e7eb}
+    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,Noto Sans;color:var(--text);margin:0;background:#fff}
     .wrap{max-width:860px;margin:0 auto;padding:22px}
     .back{display:inline-flex;gap:8px;align-items:center;margin-bottom:10px}
     .back a{color:var(--brand);text-decoration:none;border:1px solid var(--line);padding:6px 10px;border-radius:10px;background:#fff}
@@ -23,12 +23,11 @@
     .inline-img{border:1px solid var(--line);border-radius:10px;overflow:hidden}
     .inline-img img{width:100%;display:block}
     .inline-img figcaption{padding:8px 10px;color:var(--muted);font-size:.9rem}
-    .err{margin-top:12px;padding:10px;border:1px solid #fecaca;background:#fff1f2;border-radius:8px}
   </style>
 </head>
-<body class="page">
-  <main class="wrap" id="app" aria-busy="true">
-    <div class="back"><a id="backLink" href="#">← Back to Newsletter</a></div>
+<body>
+  <main class="wrap" id="app">
+    <div class="back"><a href="./index.html">← Back to Newsletter</a></div>
     <article id="article" hidden>
       <header>
         <h1 id="title">Loading…</h1>
@@ -40,146 +39,58 @@
       </header>
       <section id="content" class="body"></section>
     </article>
-    <div id="error" class="err" hidden></div>
   </main>
 
   <script>
-    (async function(){
+    (async () => {
       const params = new URLSearchParams(location.search);
       const slug = params.get('slug');
-      const ref  = params.get('ref') || '';
+      if(!slug){ document.getElementById('app').innerHTML = '<p>Missing ?slug=…</p>'; return; }
 
-      const HERE = new URL('.', location.href);
-      const basePath = HERE.pathname.endsWith('/') ? HERE.pathname : HERE.pathname + '/';
+      const res = await fetch(`./articles/${encodeURIComponent(slug)}/article.json`, {cache:'no-cache'});
+      const data = await res.json();
 
-      // Back link (preserve any inbound query)
-      const back = document.getElementById('backLink');
-      back.href = basePath + (ref ? ('?' + ref) : '');
+      document.title = data.title || 'Article';
+      document.getElementById('title').textContent = data.title || 'Untitled';
 
-      // Image fallbacks (inline handler)
-      window.__imgFallback = function(img){
-        const list = (img.dataset.fallback || '').split('|').filter(Boolean);
-        if (list.length){
-          img.onerror = null;
-          img.src = list.shift();
-          img.dataset.fallback = list.join('|');
-        }
-      };
-
-      const $err = document.getElementById('error');
-
-      if(!slug){
-        $err.hidden = false;
-        $err.textContent = 'Missing article slug (?slug=...)';
-        return;
+      if (data.date){
+        const d = new Date(data.date);
+        const t = document.getElementById('date');
+        t.textContent = d.toLocaleDateString();
+        t.setAttribute('datetime', data.date);
       }
+      document.getElementById('cats').innerHTML = (data.categories||[]).map(c=>`<span>• ${c}</span>`).join(' ');
 
-      // Try JSON first, then JS article if JSON blocked
-      async function loadJSON(urls){
-        for (const url of urls){
-          try{
-            const res = await fetch(url, { cache:'no-cache' });
-            if (res.ok) return await res.json();
-          }catch(e){}
-        }
-        throw new Error('All JSON candidates failed');
-      }
-      async function loadJSArticle(urls){
-        for (const url of urls){
-          try{
-            await new Promise((resolve, reject)=>{
-              const s = document.createElement('script');
-              s.src = url + (url.includes('?') ? '&' : '?') + 'v=' + Date.now();
-              s.onload = ()=> resolve();
-              s.onerror = ()=> reject();
-              document.head.appendChild(s);
-            });
-            if (window.NEWS_ARTICLE && typeof window.NEWS_ARTICLE === 'object') return window.NEWS_ARTICLE;
-          }catch(e){}
-        }
-        throw new Error('All JS article candidates failed');
-      }
+      const hero = document.getElementById('hero');
+      hero.src = data.hero?.image || '';
+      hero.alt = data.hero?.alt || '';
 
-      const jsonCandidates = [
-        basePath + 'articles/' + encodeURIComponent(slug) + '/article.json',
-        basePath + '/articles/' + encodeURIComponent(slug) + '/article.json',
-        '/newsletter/articles/' + encodeURIComponent(slug) + '/article.json'
-      ];
-      const jsCandidates = [
-        basePath + 'articles/' + encodeURIComponent(slug) + '/article.js',
-        basePath + '/articles/' + encodeURIComponent(slug) + '/article.js',
-        '/newsletter/articles/' + encodeURIComponent(slug) + '/article.js'
-      ];
-      const fallbackImages = [
-        basePath + '_common/assets/fallback.jpg',
-        '/newsletter/_common/assets/fallback.jpg'
-      ];
-
-      try {
-        let data;
-        try {
-          data = await loadJSON(jsonCandidates);
-        } catch {
-          data = await loadJSArticle(jsCandidates);
-        }
-
-        document.title = data.title || 'Article';
-
-        // Header
-        document.getElementById('title').textContent = data.title || 'Untitled';
-        if (data.date){
-          const d = new Date(data.date);
-          const el = document.getElementById('date');
-          el.textContent = d.toLocaleDateString();
-          el.setAttribute('datetime', data.date);
-        }
-        document.getElementById('cats').innerHTML = (data.categories||[]).map(c=>`<span>• ${c}</span>`).join(' ');
-
-        // Hero
-        const hero = document.getElementById('hero');
-        const heroSrc = (data.hero && data.hero.image) ||
-                        (basePath + 'articles/' + encodeURIComponent(slug) + '/assets/hero.jpg');
-        hero.src = heroSrc;
-        hero.alt = (data.hero && data.hero.alt) || 'Article image';
-        hero.setAttribute('data-fallback', [heroSrc, ...fallbackImages].join('|'));
-        hero.onerror = ()=> window.__imgFallback(hero);
-
-        // Body blocks
-        const body = document.getElementById('content');
-        const blocks = data.body || [];
-        body.innerHTML = blocks.map(b=>{
-          switch(b.type){
-            case 'p': return `<p>${b.text||''}</p>`;
-            case 'h2': return `<h2>${b.text||''}</h2>`;
-            case 'h3': return `<h3>${b.text||''}</h3>`;
-            case 'blockquote': return `<blockquote>${b.text||''}</blockquote>`;
-            case 'ul': return `<ul>${(b.items||[]).map(i=>`<li>${i}</li>`).join('')}</ul>`;
-            case 'ol': return `<ol>${(b.items||[]).map(i=>`<li>${i}</li>`).join('')}</ol>`;
-            case 'img': {
-              const src = b.src ||
-                (basePath + 'articles/' + encodeURIComponent(slug) + '/assets/' + (b.file || 'image.jpg'));
-              const alt = b.alt || '';
-              const cap = b.caption ? `<figcaption>${b.caption}</figcaption>` : '';
-              const pipe = [src, ...fallbackImages].join('|');
-              return `<figure class="inline-img"><img src="${src}" alt="${alt}"
-                        data-fallback="${pipe}" onerror="window.__imgFallback(this)" />${cap}</figure>`;
-            }
-            case 'code': {
-              const lang = b.lang || '';
-              return `<pre aria-label="${lang} code"><code>${(b.code||'')
-                .replace(/&/g,'&amp;').replace(/</g,'&lt;')}</code></pre>`;
-            }
-            default: return '';
+      const blocks = data.body || [];
+      const html = blocks.map(b=>{
+        switch(b.type){
+          case 'p': return `<p>${b.text||''}</p>`;
+          case 'h2': return `<h2>${b.text||''}</h2>`;
+          case 'h3': return `<h3>${b.text||''}</h3>`;
+          case 'blockquote': return `<blockquote>${b.text||''}</blockquote>`;
+          case 'ul': return `<ul>${(b.items||[]).map(i=>`<li>${i}</li>`).join('')}</ul>`;
+          case 'ol': return `<ol>${(b.items||[]).map(i=>`<li>${i}</li>`).join('')}</ol>`;
+          case 'img': {
+            const src = b.src || '';
+            const alt = b.alt || '';
+            const cap = b.caption ? `<figcaption>${b.caption}</figcaption>` : '';
+            return `<figure class="inline-img"><img src="${src}" alt="${alt}" />${cap}</figure>`;
           }
-        }).join('');
+          case 'code': {
+            const code = (b.code||'').replace(/&/g,'&amp;').replace(/</g,'&lt;');
+            const lang = b.lang || '';
+            return `<pre aria-label="${lang} code"><code>${code}</code></pre>`;
+          }
+          default: return '';
+        }
+      }).join('');
 
-        document.getElementById('article').hidden = false;
-        document.getElementById('app').setAttribute('aria-busy','false');
-      } catch (e){
-        $err.hidden = false;
-        $err.textContent = 'Could not load this article. ' + e.message;
-        console.error(e);
-      }
+      document.getElementById('content').innerHTML = html;
+      document.getElementById('article').hidden = false;
     })();
   </script>
 </body>
