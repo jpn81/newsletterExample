@@ -1,31 +1,32 @@
+<!doctype html>
+<html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Newsletter — Latest Articles</title>
-  <link rel="stylesheet" href="assets/styles.css?v=1">
+  <title>Article</title>
+  <link rel="stylesheet" href="assets/styles.css?v=2">
 </head>
-
-
 <body>
   <!-- Shared Volvo top bar -->
   <header class="vg-header">
     <div class="vg-header__inner">
-      <a class="vg-logo" href="./index.html" aria-label="Newsletter home">
-        <img src="./assets/volvo-logo.svg" alt="Volvo" />
+      <a class="vg-logo" href="index.html" aria-label="Newsletter home">
+        <img src="assets/volvo-logo.svg" alt="Volvo" />
       </a>
     </div>
   </header>
 
-  <!-- Breadcrumbs: article = Newsletter › {Article Title} -->
+  <!-- Breadcrumbs: Newsletter › {Article Title} -->
   <nav class="vg-breadcrumbs" aria-label="Breadcrumb">
     <ol>
-      <li><a href="./index.html">Newsletter</a></li>
+      <li><a href="index.html">Newsletter</a></li>
       <li id="crumb-current" aria-current="page">Loading…</li>
     </ol>
   </nav>
 
-  <main class="wrap">
-    <div class="back"><a href="./index.html">← Back to Newsletter</a></div>
+  <main class="wrap" id="app">
+    <div class="back"><a href="index.html">← Back to Newsletter</a></div>
+
     <article id="article" hidden>
       <header>
         <h1 id="title">Loading…</h1>
@@ -37,9 +38,10 @@
       </header>
       <section id="content" class="body"></section>
     </article>
+
+    <div id="err" style="display:none;color:#b91c1c;margin-top:12px;"></div>
   </main>
 
-<script src="assets/article.js?v=1"></script> <!-- on article.html -->
-
-
+  <script defer src="assets/article.js?v=2"></script>
 </body>
+</html>
