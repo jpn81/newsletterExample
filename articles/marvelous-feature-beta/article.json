@@ -1,0 +1,17 @@
+{
+  "slug": "marvelous-feature-beta",
+  "title": "Marvelous Feature — Beta",
+  "date": "2025-09-08",
+  "categories": ["Product", "Update"],
+  "hero": {
+    "image": "articles/marvelous-feature-beta/assets/hero.jpg",
+    "alt": "Screenshot of the Marvelous Feature in action"
+  },
+  "body": [
+    { "type": "p",  "text": "We’re introducing the Marvelous Feature in beta to selected users." },
+    { "type": "h2", "text": "What’s new" },
+    { "type": "ul", "items": ["Faster workflows", "Cleaner UI", "Smart defaults"] },
+    { "type": "blockquote", "text": "“This speeds up my day.” — Pilot user" },
+    { "type": "p",  "text": "Tell us what you think so we can refine it for GA." }
+  ]
+}
