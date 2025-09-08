@@ -54,6 +54,12 @@ function onImgError(e) { e.target.src = DEFAULT_HERO; }
     function esc(s=''){ return String(s).replace(/[&<>]/g, m=>({ '&':'&amp;','<':'&lt;','>':'&gt;' }[m])); }
 
     function render(a, lang) {
+
+      ${`<img class="img-fluid rounded mt-3"
+        src="${esc(pickHero(a, lang))}"
+        alt="${esc(alt)}"
+        onerror="onImgError(event)">`}
+
       const L = a.locales?.[lang] || a.locales?.en || (a.locales ? Object.values(a.locales)[0] : null);
       if(!L){ return setHTML('<p>Missing locales in article JSON.</p>'); }
       const alt = typeof a.hero?.alt === 'object' ? (a.hero.alt[lang] || a.hero.alt.en || '') : (a.hero?.alt || '');
