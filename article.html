@@ -1,94 +1,115 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8"/>
-  <title>Article | Competence Development</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Article</title>
   <style>
-    .date{font-size:.9rem;color:#6c757d}
-    .badge-star::before{content:"★ ";margin-right:.25rem}
+    :root{--brand:#081A35;--text:#0f172a;--muted:#475569;--line:#e5e7eb;--bg:#fff}
+    .page{font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,Noto Sans,"Apple Color Emoji","Segoe UI Emoji";color:var(--text);background:var(--bg)}
+    .wrap{max-width:860px;margin:0 auto;padding:22px}
+    .back{display:inline-flex;gap:8px;align-items:center;margin-bottom:10px}
+    .back a{color:var(--brand);text-decoration:none;border:1px solid var(--line);padding:6px 10px;border-radius:10px;background:#fff}
+    .back a:hover{box-shadow:0 1px 6px rgba(0,0,0,.08)}
+    h1{margin:.2rem 0 .5rem;font-size:clamp(1.6rem,1rem+2vw,2.2rem)}
+    .meta{display:flex;gap:10px 14px;flex-wrap:wrap;color:var(--muted)}
+    .hero{margin:14px 0 18px}
+    .hero img{width:100%;height:auto;display:block;border-radius:12px;border:1px solid var(--line);object-fit:cover}
+    .body{display:grid;gap:14px}
+    .body p{margin:0;line-height:1.7}
+    .body h2{margin:12px 0 2px;font-size:1.25rem}
+    .body h3{margin:10px 0 0;font-size:1.1rem}
+    .body blockquote{margin:0;padding:10px 12px;border-left:4px solid var(--brand);background:#f8fafc;border-radius:6px}
+    .inline-img{border:1px solid var(--line);border-radius:10px;overflow:hidden}
+    .inline-img img{width:100%;display:block}
+    .inline-img figcaption{padding:8px 10px;color:var(--muted);font-size:.9rem}
   </style>
 </head>
-<body class="bg-light">
-  <nav class="navbar bg-white border-bottom">
-    <div class="container">
-      <a class="navbar-brand fw-semibold" href="./">Volvo</a>
-      <span class="navbar-text">Competence Development</span>
-    </div>
-  </nav>
-
-  <main class="container py-4">
-    <article id="article" class="mx-auto" style="max-width: 860px;"></article>
+<body class="page">
+  <main class="wrap" id="app" aria-busy="true">
+    <div class="back"><a id="backLink" href="/newsletter/">← Back to Newsletter</a></div>
+    <article id="article" hidden>
+      <header>
+        <h1 id="title">Loading…</h1>
+        <div class="meta">
+          <time id="date"></time>
+          <span id="cats"></span>
+        </div>
+        <div class="hero"><img id="hero" alt=""></div>
+      </header>
+      <section id="content" class="body"></section>
+    </article>
   </main>
 
   <script>
-    const qs = new URLSearchParams(location.search);
-    const slug = qs.get('slug');
-    const lang = (qs.get('lang') || 'en').toLowerCase();
-    const fmt = d => `${d.slice(0,4)}-${d.slice(4,6)}-${d.slice(6,8)}`;
-const DEFAULT_HERO = '/assets/img/placeholder-1200x630.jpg';
+    (async function(){
+      const params = new URLSearchParams(location.search);
+      const slug = params.get('slug');
+      const ref = params.get('ref') || '';
+      const FALLBACK = '/newsletter/_common/assets/fallback.jpg';
+      const back = document.getElementById('backLink');
+      back.href = '/newsletter/' + (ref ? ('?'+ref) : '');
 
-function firstBodyImage(article, lang) {
-  const L = article.locales?.[lang] || article.locales?.en || Object.values(article.locales||{})[0] || {};
-  const img = (L.body || []).find(b => b.type === 'img' && b.src && b.src.trim());
-  return img?.src || null;
-}
+      if(!slug){
+        document.getElementById('app').innerHTML = '<p>Missing article slug.</p>';
+        return;
+      }
 
-function pickHero(article, lang) {
-  const direct = article.hero?.image && article.hero.image.trim() ? article.hero.image : null;
-  return direct || firstBodyImage(article, lang) || DEFAULT_HERO;
-}
+      const jsonUrl = `/newsletter/articles/${encodeURIComponent(slug)}/article.json`;
+      try {
+        const res = await fetch(jsonUrl, {cache:'no-cache'});
+        const data = await res.json();
 
-function onImgError(e) { e.target.src = DEFAULT_HERO; }
+        document.title = data.title || 'Article';
 
-    async function load(){
-      if(!slug){ return setHTML('<p>Missing ?slug=…</p>'); }
-      const r = await fetch(`./articles/${slug}.json`, {cache:'no-store'});
-      if(!r.ok){ return setHTML('<p>Article not found.</p>'); }
-      const data = await r.json();
-      render(data, lang);
-    }
-
-    function setHTML(html){ document.getElementById('article').innerHTML = html; }
-    function esc(s=''){ return String(s).replace(/[&<>]/g, m=>({ '&':'&amp;','<':'&lt;','>':'&gt;' }[m])); }
-
-    function render(a, lang) {
-
-      ${`<img class="img-fluid rounded mt-3"
-        src="${esc(pickHero(a, lang))}"
-        alt="${esc(alt)}"
-        onerror="onImgError(event)">`}
-
-      const L = a.locales?.[lang] || a.locales?.en || (a.locales ? Object.values(a.locales)[0] : null);
-      if(!L){ return setHTML('<p>Missing locales in article JSON.</p>'); }
-      const alt = typeof a.hero?.alt === 'object' ? (a.hero.alt[lang] || a.hero.alt.en || '') : (a.hero?.alt || '');
-
-      const head = `
-        <header class="mb-3">
-          <h1 class="h3 ${a.featured?'badge-star':''}">${esc(L.title||'Untitled')}</h1>
-          <div class="date">${fmt(a.date||'')}</div>
-          <div class="mt-2">${(a.categories||[]).map(c=>`<span class="badge text-bg-light border me-1">#${esc(c)}</span>`).join('')}</div>
-          ${a.hero?.image ? `<img class="img-fluid rounded mt-3" src="${esc(a.hero.image)}" alt="${esc(alt)}">` : ``}
-        </header>`;
-
-      const body = (L.body||[]).map(b=>{
-        switch(b.type){
-          case 'p':   return `<p>${esc(b.text||'')}</p>`;
-          case 'h2':  return `<h2 class="h5 mt-4">${esc(b.text||'')}</h2>`;
-          case 'img': return `<img class="img-fluid rounded my-3" src="${esc(b.src||'')}" alt="${esc(b.alt||'')}">`;
-          case 'video': return `<video controls class="w-100 my-3 rounded" src="${esc(b.src||'')}" ${b.poster?`poster="${esc(b.poster)}"`:''}></video>`;
-          case 'link': return `<p><a href="${esc(b.href||'#')}" target="_blank" rel="noopener">${esc(b.text||b.href||'link')}</a></p>`;
-          case 'embed': return `<div class="ratio ratio-16x9 my-3">${b.html||''}</div>`;
-          case 'ul':  return `<ul>${(b.items||[]).map(i=>`<li>${esc(i)}</li>`).join('')}</ul>`;
-          default:    return '';
+        // Header
+        document.getElementById('title').textContent = data.title || 'Untitled';
+        if (data.date){
+          const d = new Date(data.date);
+          document.getElementById('date').textContent = d.toLocaleDateString();
+          document.getElementById('date').setAttribute('datetime', data.date);
         }
-      }).join('\n');
+        document.getElementById('cats').innerHTML = (data.categories||[]).map(c=>`<span>• ${c}</span>`).join(' ');
 
-      setHTML(head + body + `<hr class="my-4"><p><a href="./">← Back to News</a></p>`);
-    }
+        // Hero
+        const hero = document.getElementById('hero');
+        hero.src = (data.hero && data.hero.image) || FALLBACK;
+        hero.alt = (data.hero && data.hero.alt) || 'Article image';
+        hero.onerror = () => { hero.onerror=null; hero.src = FALLBACK; };
 
-    load();
+        // Body (supports simple blocks)
+        const body = document.getElementById('content');
+        const blocks = data.body || [];
+        body.innerHTML = blocks.map(b=>{
+          switch(b.type){
+            case 'p': return `<p>${b.text||''}</p>`;
+            case 'h2': return `<h2>${b.text||''}</h2>`;
+            case 'h3': return `<h3>${b.text||''}</h3>`;
+            case 'blockquote': return `<blockquote>${b.text||''}</blockquote>`;
+            case 'ul': return `<ul>${(b.items||[]).map(i=>`<li>${i}</li>`).join('')}</ul>`;
+            case 'ol': return `<ol>${(b.items||[]).map(i=>`<li>${i}</li>`).join('')}</ol>`;
+            case 'img': {
+              const src = b.src || FALLBACK;
+              const alt = b.alt || '';
+              const cap = b.caption ? `<figcaption>${b.caption}</figcaption>` : '';
+              return `<figure class="inline-img"><img src="${src}" alt="${alt}" onerror="this.onerror=null;this.src='${FALLBACK}'" />${cap}</figure>`;
+            }
+            case 'code': {
+              const lang = b.lang || '';
+              return `<pre aria-label="${lang} code"><code>${(b.code||'')
+                .replace(/&/g,'&amp;').replace(/</g,'&lt;')}</code></pre>`;
+            }
+            default: return '';
+          }
+        }).join('');
+
+        document.getElementById('article').hidden = false;
+        document.getElementById('app').setAttribute('aria-busy','false');
+      } catch (e){
+        document.getElementById('app').innerHTML = `<p>Could not load this article.</p>`;
+        console.error('Article load error', e);
+      }
+    })();
   </script>
 </body>
 </html>
