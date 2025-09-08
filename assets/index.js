@@ -1,12 +1,10 @@
 (async () => {
   const res = await fetch('./articles/manifest.json', { cache: 'no-cache' });
   const items = await res.json();
-
-  // newest → oldest (expects YYYY-MM-DD)
   items.sort((a, b) => (b.date || '').localeCompare(a.date || ''));
 
   const $list = document.getElementById('list');
-  const $search = document.getElementById('search');
+  const $search = document.getElementById('nl-search'); // ← updated
 
   const render = (rows) => {
     $list.innerHTML = rows.map(it => {
@@ -27,10 +25,8 @@
     }).join('');
   };
 
-  // initial render
   render(items);
 
-  // simple client-side filter (title + excerpt + categories)
   if ($search) {
     $search.addEventListener('input', (e) => {
       const q = e.target.value.trim().toLowerCase();
