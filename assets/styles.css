@@ -83,3 +83,45 @@ h1{margin:0 0 8px; font-size:clamp(1.6rem,1rem + 2vw,2.2rem)}
   .card{grid-template-columns:1fr}
   .thumb{max-height:220px}
 }
+
+/* ===== Controls row (search near title + tag filters) ===== */
+.nl-controls{margin:16px 0 18px; display:grid; gap:12px}
+.nl-controls__row{display:flex; gap:12px; align-items:center; flex-wrap:wrap}
+
+.nl-search input{
+  width:min(420px,100%);
+  border:1px solid var(--line);
+  border-radius:999px;
+  padding:8px 12px;
+  font-size:.95rem;
+  background:#fff;
+  outline:none;
+}
+.nl-search input:focus{border-color:var(--brand); box-shadow:0 0 0 3px rgba(8,26,53,.12)}
+
+.btn-clear{border-style:dashed}
+
+.nl-filters{display:grid; gap:8px}
+.nl-filter-label{color:var(--muted); font-size:.9rem}
+.nl-tags{display:flex; gap:8px; flex-wrap:wrap}
+
+/* Tag pills (toggle buttons) */
+.tag{
+  border:1px dashed var(--line);
+  background:#fff;
+  border-radius:999px;
+  padding:6px 12px;
+  font-size:.9rem;
+  color:#334155;
+  cursor:pointer;
+}
+.tag:hover{box-shadow:0 1px 6px rgba(0,0,0,.08)}
+.tag.active{
+  border:1px solid var(--brand);
+  background:var(--brand);
+  color:#fff;
+}
+
+/* Empty state */
+.nl-empty{color:var(--muted); margin-top:8px}
+
