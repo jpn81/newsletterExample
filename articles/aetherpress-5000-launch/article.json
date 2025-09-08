@@ -1,0 +1,18 @@
+{
+  "slug": "aetherpress-5000-launch",
+  "title": "AetherPress 5000 Launch",
+  "date": "2025-09-08",
+  "categories": ["Technology", "Innovation"],
+  "hero": {
+    "image": "/newsletter/articles/aetherpress-5000-launch/assets/hero.jpg",
+    "alt": "AetherPress 5000 on the factory floor"
+  },
+  "body": [
+    { "type": "p", "text": "Introducing the AetherPress 5000, our most capable press to date." },
+    { "type": "h2", "text": "Highlights" },
+    { "type": "ul", "items": ["Ultra-precise tolerances", "Smarter automation", "Lower energy use"] },
+    { "type": "img", "src": "/newsletter/articles/aetherpress-5000-launch/assets/gallery-1.jpg", "alt": "Side view", "caption": "Compact footprint with modular add-ons." },
+    { "type": "blockquote", "text": "“Install, calibrate, and run in under an hour.”" },
+    { "type": "p", "text": "Availability starts next quarter in select markets." }
+  ]
+}
