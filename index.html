@@ -5,11 +5,10 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Newsletter — Latest Articles</title>
   <meta name="description" content="Latest articles from Competence Development & Delivery." />
-  <!-- External styles (keep the path exactly like this on GitHub Pages) -->
-  <link rel="stylesheet" href="assets/styles.css?v=3">
+  <link rel="stylesheet" href="assets/styles.css?v=4">
 </head>
 <body>
-  <!-- Shared Volvo-style top bar -->
+  <!-- Shared Volvo-style top bar (no search here anymore) -->
   <header class="vg-header">
     <div class="vg-header__inner">
       <div class="vg-brand">
@@ -18,12 +17,6 @@
           <span class="vg-title">Competence Development &amp; Delivery</span>
         </a>
       </div>
-
-      <!-- Search (filters the list on this page via assets/index.js) -->
-      <form class="vg-search" role="search" action="javascript:void(0)">
-        <label class="sr-only" for="nl-search">Search articles</label>
-        <input id="nl-search" type="search" placeholder="Search articles…" autocomplete="off">
-      </form>
     </div>
   </header>
 
@@ -39,11 +32,31 @@
     <h1>Newsletter</h1>
     <p class="sub">Latest articles, newest first.</p>
 
+    <!-- Controls: search near the title + tag filters -->
+    <section class="nl-controls" aria-label="Filters">
+      <div class="nl-controls__row">
+        <form class="nl-search" role="search" action="javascript:void(0)">
+          <label class="sr-only" for="nl-search">Search articles</label>
+          <input id="nl-search" type="search" placeholder="Search articles…" autocomplete="off">
+        </form>
+
+        <button id="nl-clear" class="btn btn-clear" type="button" hidden>Clear</button>
+      </div>
+
+      <div class="nl-filters">
+        <span class="nl-filter-label" id="nl-filter-label">Filter by tags:</span>
+        <div id="nl-tags" class="nl-tags" role="listbox" aria-labelledby="nl-filter-label"></div>
+      </div>
+    </section>
+
     <!-- Article cards get rendered here by assets/index.js -->
     <div id="list" class="grid" role="list"></div>
+
+    <!-- Empty-state -->
+    <p id="nl-empty" class="nl-empty" hidden>No articles match your filters.</p>
   </main>
 
   <!-- Landing logic: loads ./articles/manifest.json and renders cards -->
-  <script src="assets/index.js?v=3" defer></script>
+  <script src="assets/index.js?v=4" defer></script>
 </body>
 </html>
