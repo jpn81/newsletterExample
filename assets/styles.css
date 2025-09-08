@@ -6,6 +6,15 @@ html,body{margin:0;background:#fff;color:var(--text);
   font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,Noto Sans;}
 .wrap{max-width:940px;margin:0 auto;padding:24px}
 
+.vg-brand .vg-home{
+  display:flex; align-items:center; gap:12px;
+  text-decoration:none; color:inherit;
+}
+.vg-brand .vg-home:focus{
+  outline:2px solid var(--brand); outline-offset:4px; border-radius:8px;
+}
+
+
 /* Accessibly hide text for screen-readers-only labels */
 .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 
