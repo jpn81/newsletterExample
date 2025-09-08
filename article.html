@@ -1,12 +1,21 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Article</title>
-  <link rel="stylesheet" href="./assets/styles.css">
-</head>
 <body>
+  <!-- Shared Volvo top bar -->
+  <header class="vg-header">
+    <div class="vg-header__inner">
+      <a class="vg-logo" href="./index.html" aria-label="Newsletter home">
+        <img src="./assets/volvo-logo.svg" alt="Volvo" />
+      </a>
+    </div>
+  </header>
+
+  <!-- Breadcrumbs: article = Newsletter › {Article Title} -->
+  <nav class="vg-breadcrumbs" aria-label="Breadcrumb">
+    <ol>
+      <li><a href="./index.html">Newsletter</a></li>
+      <li id="crumb-current" aria-current="page">Loading…</li>
+    </ol>
+  </nav>
+
   <main class="wrap">
     <div class="back"><a href="./index.html">← Back to Newsletter</a></div>
     <article id="article" hidden>
@@ -24,4 +33,3 @@
 
   <script src="./assets/article.js"></script>
 </body>
-</html>
