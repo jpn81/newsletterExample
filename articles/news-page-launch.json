@@ -1,0 +1,74 @@
+{
+  "article": {
+    "slug": "news-page-launch",
+    "date": "20250908",
+    "featured": true,
+    "categories": ["Announcements"],
+    "tags": ["launch", "updates", "community"],
+    "hero": {
+      "image": "/assets/img/news-page-launch.jpg",
+      "alt": {
+        "en": "Illustration of a fresh news page launch",
+        "sv": "Illustration av en nyhetsida som lanseras"
+      }
+    },
+    "locales": {
+      "en": {
+        "title": "We’ve Launched Our News Page!",
+        "summary": "Our new news page is live – a hub for updates, stories, and announcements.",
+        "body": [
+          {
+            "type": "paragraph",
+            "content": "We are excited to announce the launch of our brand-new news page! This space will serve as the central hub for updates, stories, and important announcements about our community and projects."
+          },
+          {
+            "type": "paragraph",
+            "content": "The news page is designed to make it easier for you to stay connected and informed. Whether it’s new feature releases, upcoming events, or behind-the-scenes insights, you’ll find it all here."
+          },
+          {
+            "type": "img",
+            "src": "/assets/img/news-page-screenshot.jpg",
+            "alt": "Screenshot of the new news page design"
+          },
+          {
+            "type": "paragraph",
+            "content": "We look forward to sharing more with you and building this space together. Don’t forget to check back regularly for the latest updates!"
+          }
+        ]
+      },
+      "sv": {
+        "title": "Vi har lanserat vår nyhetssida!",
+        "summary": "Vår nya nyhetssida är live – en plats för uppdateringar, berättelser och meddelanden.",
+        "body": [
+          {
+            "type": "paragraph",
+            "content": "Vi är glada att kunna meddela lanseringen av vår helt nya nyhetssida! Denna plats kommer att fungera som navet för uppdateringar, berättelser och viktiga meddelanden om vår gemenskap och våra projekt."
+          },
+          {
+            "type": "paragraph",
+            "content": "Nyhetssidan är utformad för att göra det enklare för dig att hålla dig uppdaterad och informerad. Oavsett om det handlar om nya funktioner, kommande evenemang eller insikter bakom kulisserna hittar du allt här."
+          },
+          {
+            "type": "img",
+            "src": "/assets/img/news-page-screenshot.jpg",
+            "alt": "Skärmdump av den nya nyhetssidan"
+          },
+          {
+            "type": "paragraph",
+            "content": "Vi ser fram emot att dela mer med dig och bygga denna plats tillsammans. Glöm inte att titta tillbaka regelbundet för de senaste uppdateringarna!"
+          }
+        ]
+      }
+    }
+  },
+  "metadata": {
+    "slug": "news-page-launch",
+    "title": "We’ve Launched Our News Page!",
+    "date": "20250908",
+    "categories": ["Announcements"],
+    "tags": ["launch", "updates", "community"],
+    "featured": true,
+    "hero": "/assets/img/news-page-launch.jpg",
+    "summary": "Our new news page is live – a hub for updates, stories, and announcements."
+  }
+}
