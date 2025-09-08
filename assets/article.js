@@ -12,6 +12,10 @@
   document.title = data.title || 'Article';
   document.getElementById('title').textContent = data.title || 'Untitled';
 
+  // NEW: breadcrumb current
+const crumb = document.getElementById('crumb-current');
+if (crumb) crumb.textContent = data.title || 'Article';
+
   if (data.date) {
     const t = document.getElementById('date');
     t.textContent = new Date(data.date).toLocaleDateString();
