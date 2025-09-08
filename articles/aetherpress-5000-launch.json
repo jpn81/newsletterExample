@@ -1,0 +1,84 @@
+{
+  "article": {
+    "slug": "aetherpress-5000-launch",
+    "date": "20250908",
+    "featured": true,
+    "categories": ["Technology", "Innovation"],
+    "tags": ["machine", "automation", "future", "engineering"],
+    "hero": {
+      "image": "/assets/img/aetherpress-5000.jpg",
+      "alt": {
+        "en": "The newly unveiled AetherPress 5000 machine in a futuristic factory setting",
+        "sv": "Den nyligen presenterade AetherPress 5000-maskinen i en futuristisk fabriksomgivning"
+      }
+    },
+    "locales": {
+      "en": {
+        "title": "AetherPress 5000: The Machine That Redefines Automation",
+        "summary": "The AetherPress 5000, a groundbreaking new machine, promises to revolutionize industrial automation with unmatched precision and adaptability.",
+        "body": [
+          {
+            "type": "paragraph",
+            "text": "In a highly anticipated reveal, engineers introduced the AetherPress 5000, a next-generation machine designed to push the boundaries of industrial automation. Built with cutting-edge adaptive intelligence, it can reconfigure itself for multiple manufacturing tasks without manual intervention."
+          },
+          {
+            "type": "paragraph",
+            "text": "Unlike traditional machines locked into single-purpose use, the AetherPress 5000 dynamically learns from its environment, adjusting speed, force, and technique in real time. This breakthrough makes it suitable for industries ranging from aerospace to food processing."
+          },
+          {
+            "type": "img",
+            "src": "/assets/img/aetherpress-5000-demo.jpg",
+            "alt": "Demonstration of the AetherPress 5000 adapting to different materials"
+          },
+          {
+            "type": "paragraph",
+            "text": "According to the development team, the AetherPress 5000 reduces energy consumption by up to 40% while increasing output efficiency. Early pilot programs have shown promising results, with manufacturers reporting shorter production cycles and lower operational costs."
+          },
+          {
+            "type": "link",
+            "text": "Learn more about AetherPress 5000",
+            "href": "https://example.com/aetherpress5000"
+          }
+        ]
+      },
+      "sv": {
+        "title": "AetherPress 5000: Maskinen som omdefinierar automation",
+        "summary": "AetherPress 5000, en banbrytande ny maskin, lovar att revolutionera industriell automation med oöverträffad precision och anpassningsförmåga.",
+        "body": [
+          {
+            "type": "paragraph",
+            "text": "Vid en efterlängtad lansering presenterade ingenjörer AetherPress 5000, en nästa generations maskin utformad för att tänja gränserna för industriell automation. Med avancerad adaptiv intelligens kan den omkonfigurera sig för flera olika produktionstillämpningar utan manuell inblandning."
+          },
+          {
+            "type": "paragraph",
+            "text": "Till skillnad från traditionella maskiner som är låsta till en enda uppgift, lär sig AetherPress 5000 dynamiskt av sin omgivning och justerar hastighet, kraft och teknik i realtid. Detta genombrott gör den användbar för industrier från flyg- till livsmedelsproduktion."
+          },
+          {
+            "type": "img",
+            "src": "/assets/img/aetherpress-5000-demo.jpg",
+            "alt": "Demonstration av AetherPress 5000 som anpassar sig till olika material"
+          },
+          {
+            "type": "paragraph",
+            "text": "Enligt utvecklingsteamet minskar AetherPress 5000 energiförbrukningen med upp till 40 % samtidigt som produktionseffektiviteten ökar. Tidiga pilotprogram har visat lovande resultat, där tillverkare rapporterar kortare produktionscykler och lägre driftkostnader."
+          },
+          {
+            "type": "link",
+            "text": "Läs mer om AetherPress 5000",
+            "href": "https://example.com/aetherpress5000"
+          }
+        ]
+      }
+    }
+  },
+  "metadata": {
+    "slug": "aetherpress-5000-launch",
+    "title": "AetherPress 5000: The Machine That Redefines Automation",
+    "date": "20250908",
+    "categories": ["Technology", "Innovation"],
+    "tags": ["machine", "automation", "future", "engineering"],
+    "featured": true,
+    "hero": "/assets/img/aetherpress-5000.jpg",
+    "summary": "The AetherPress 5000, a groundbreaking new machine, promises to revolutionize industrial automation with unmatched precision and adaptability."
+  }
+}
