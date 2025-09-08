@@ -6,7 +6,8 @@ html,body{margin:0;background:#fff;color:var(--text);
   font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,Noto Sans;}
 .wrap{max-width:940px;margin:0 auto;padding:24px}
 
-/* ===== Volvo top bar ===== */
+
+/* ===== Shared Volvo top bar ===== */
 .vg-header{
   background:#ffffff;
   border-bottom:1px solid #e5e7eb;
@@ -19,14 +20,14 @@ html,body{margin:0;background:#fff;color:var(--text);
   align-items:center;
 }
 .vg-logo img{
-  height:22px;             /* visually close to site ref */
+  height:22px;
   width:auto;
   display:block;
 }
 
-/* ===== Volvo-like breadcrumbs ===== */
+/* ===== Breadcrumbs (Newsletter-first) ===== */
 .vg-breadcrumbs{
-  background:#f7f7f8;      /* subtle grey band like volvo site */
+  background:#f7f7f8;
   border-bottom:1px solid #e5e7eb;
 }
 .vg-breadcrumbs ol{
@@ -38,7 +39,7 @@ html,body{margin:0;background:#fff;color:var(--text);
   flex-wrap:wrap;
   gap:8px;
   font-size:.9rem;
-  color:#475569;           /* muted slate */
+  color:#475569;
 }
 .vg-breadcrumbs li{
   display:inline-flex;
@@ -46,20 +47,19 @@ html,body{margin:0;background:#fff;color:var(--text);
   gap:8px;
 }
 .vg-breadcrumbs li+li::before{
-  content:"›";             /* chevron separator */
-  color:#94a3b8;           /* lighter slate */
+  content:"›";
+  color:#94a3b8;
   font-size:1rem;
 }
 .vg-breadcrumbs a{
   text-decoration:none;
-  color:#334155;           /* slightly stronger than muted */
+  color:#334155;
 }
 .vg-breadcrumbs a:hover{
   text-decoration:underline;
   text-underline-offset:2px;
 }
 
-/* keep your existing styles below… */
 
 
 /* Headings / small text */
