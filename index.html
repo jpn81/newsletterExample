@@ -2,201 +2,78 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>News | Competence Development</title>
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <title>Newsletter — Latest Articles</title>
   <style>
-    .date{font-size:.85rem;color:#6c757d}
-    .tag{cursor:pointer}
-    .badge-star::before{content:"★ ";margin-right:.25rem}
+    :root{--brand:#081A35;--text:#0f172a;--muted:#475569;--line:#e5e7eb;--card:#fff;--bg:#fff}
+    .nl{font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,Noto Sans,"Apple Color Emoji","Segoe UI Emoji";color:var(--text);background:var(--bg)}
+    .wrap{max-width:940px;margin:0 auto;padding:24px}
+    h1{margin:0 0 8px;font-size:clamp(1.6rem,1rem+2vw,2.2rem)}
+    .sub{color:var(--muted);margin:0 0 16px}
+    .grid{display:grid;gap:16px}
+    .card{display:grid;grid-template-columns:120px 1fr;gap:14px;border:1px solid var(--line);border-radius:12px;background:var(--card);padding:12px;align-items:center}
+    .thumb{width:100%;aspect-ratio:16/10;object-fit:cover;border-radius:8px;border:1px solid var(--line);background:#f8fafc}
+    .meta{display:flex;gap:8px;flex-wrap:wrap;color:var(--muted);font-size:.9rem;margin:4px 0}
+    .title{margin:0 0 4px;font-size:1.1rem;line-height:1.35}
+    .excerpt{margin:0 0 10px;color:#111827;line-height:1.55}
+    .row{display:flex;gap:10px;flex-wrap:wrap}
+    .btn{appearance:none;border:1px solid var(--line);background:#fff;border-radius:10px;padding:8px 12px;text-decoration:none;color:var(--brand);font-weight:600}
+    .btn:hover{box-shadow:0 1px 6px rgba(0,0,0,.08)}
+    .pill{border:1px dashed var(--line);border-radius:999px;padding:4px 10px;font-size:.85rem;color:var(--muted)}
+    .sr{position:absolute;width:1px;height:1px;margin:-1px;overflow:hidden;clip:rect(0,0,0,0)}
+    @media (max-width:580px){.card{grid-template-columns:1fr}.thumb{max-height:220px}}
   </style>
 </head>
-<body class="bg-light">
-  <nav class="navbar navbar-expand bg-white border-bottom">
-    <div class="container">
-      <a class="navbar-brand fw-semibold" href="#">Volvo</a>
-      <span class="navbar-text">Competence Development</span>
-    </div>
-  </nav>
-
-  <main class="container py-4">
-    <div class="row g-3 align-items-center">
-      <div class="col-md-6">
-        <input id="search" class="form-control" type="search" placeholder="Search articles or #tags…">
-      </div>
-      <div class="col-md-6 text-md-end" id="tag-bar"></div>
-    </div>
-    <hr class="my-4">
-    <div id="grid" class="row g-4"></div>
-    <div id="status" class="text-center text-muted small mt-3"></div>
+<body class="nl">
+  <main class="wrap" id="app" aria-busy="true">
+    <h1>Newsletter</h1>
+    <p class="sub">Latest articles, newest first.</p>
+    <div id="list" class="grid" role="list"></div>
   </main>
 
-  <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2"></script>
   <script>
-    // ------- CONFIG / FALLBACKS --------
-    // If NOT on GitHub Pages or you hit API limits, set SLUGS manually:
-    // const SLUGS = ['phev-12v-basics','marvelous-feature-unveiled'];
-    const SLUGS = null; // keep null to auto-discover on GitHub Pages
+    (async function(){
+      const $list = document.getElementById('list');
+      const FALLBACK = '/newsletter/_common/assets/fallback.jpg';
+      const source = '/newsletter/articles/manifest.json';
 
-    // Prefer English for listing; change to 'sv' to show Swedish titles/summaries.
-    const LIST_LANG = 'en';
-
-    // ------- HELPERS --------
-    const state = { data: [], tags: new Set(), activeTags: new Set(), fuse: null };
-    const byDate = (a,b)=> b.date.localeCompare(a.date) || a.title.localeCompare(b.title);
-    const formatDate = d => `${d.slice(0,4)}-${d.slice(4,6)}-${d.slice(6,8)}`;
-    const setStatus = msg => document.getElementById('status').textContent = msg ?? '';
-
-    function detectGhRepo() {
-      // Works for https://<user>.github.io/<repo>/*
-      const host = location.host;
-      const path = location.pathname.split('/').filter(Boolean);
-      if (!/github\.io$/.test(host) || path.length === 0) return null;
-      const username = host.split('.')[0];
-      const repo = path[0];
-      const branch = 'main'; // change if your default branch is different
-      return { username, repo, branch };
-    }
-
-    // Fetch list of article filenames from GitHub API
-    async function ghListArticles({username, repo, branch}) {
-      const url = `https://api.github.com/repos/${username}/${repo}/contents/articles?ref=${encodeURIComponent(branch)}`;
-      const res = await fetch(url, { headers: { 'Accept': 'application/vnd.github+json' }});
-      if (!res.ok) throw new Error(`GitHub API ${res.status}`);
-      const files = await res.json();
-      return files
-        .filter(f => f.type === 'file' && f.name.endsWith('.json'))
-        .map(f => f.name.replace(/\.json$/,''));
-    }
-
-    // Fetch a single article JSON (prefer site-relative; fallback to raw GH)
-    async function fetchArticle(slug, gh) {
-      // Try site-relative first (works on GitHub Pages and SWA)
       try {
-        const r = await fetch(`./articles/${slug}.json`, { cache: 'no-store' });
-        if (r.ok) return await r.json();
-      } catch (_) {}
-      // Fallback to raw.githubusercontent (only if gh info present)
-      if (gh) {
-        const raw = `https://raw.githubusercontent.com/${gh.username}/${gh.repo}/${gh.branch}/articles/${slug}.json`;
-        const r2 = await fetch(raw, { cache: 'no-store' });
-        if (r2.ok) return await r2.json();
-      }
-      throw new Error(`Article ${slug} not found`);
-    }
+        const res = await fetch(source, {cache:'no-cache'});
+        const items = await res.json();
 
-    function articleToMeta(a) {
-      const L = a.locales?.[LIST_LANG] || a.locales?.en || Object.values(a.locales||{})[0] || {};
-      const cats = a.categories || [];
-      const tags = a.tags || [];
-      const hero = typeof a.hero?.image === 'string' ? a.hero.image : null;
-      return {
-        slug: a.slug,
-        title: L.title || a.slug,
-        date: a.date || '19700101',
-        categories: cats,
-        tags: tags,
-        featured: !!a.featured,
-        hero,
-        summary: L.summary || ''
-      };
-    }
+        // sort newest → oldest by ISO date (YYYY-MM-DD)
+        items.sort((a,b)=> (b.date || '').localeCompare(a.date || ''));
 
-    function renderTags(){
-      const bar = document.getElementById('tag-bar'); bar.innerHTML='';
-      [...state.tags].sort((a,b)=>a.localeCompare(b,'en',{sensitivity:'base'})).forEach(tag=>{
-        const el = document.createElement('span');
-        el.className='badge rounded-pill text-bg-secondary me-2 tag';
-        el.textContent = `#${tag}`;
-        el.onclick = () => {
-          if(state.activeTags.has(tag)){ state.activeTags.delete(tag); el.classList.replace('text-bg-primary','text-bg-secondary'); }
-          else { state.activeTags.add(tag); el.classList.replace('text-bg-secondary','text-bg-primary'); }
-          applyFilters();
-        };
-        bar.appendChild(el);
-      });
-    }
-
-    function applyFilters(){
-      const q = document.getElementById('search').value.trim();
-      let list = q ? state.fuse.search(q).map(r=>r.item) : [...state.data];
-      if (state.activeTags.size) {
-        list = list.filter(a => {
-          const all = new Set([...(a.categories||[]), ...(a.tags||[])]);
-          return [...state.activeTags].every(t => all.has(t));
-        });
-      }
-      renderCards(list);
-    }
-
-    function renderCards(list){
-      const grid = document.getElementById('grid'); grid.innerHTML='';
-      [...list].sort((a,b)=> (b.featured - a.featured) || byDate(a,b)).forEach(a=>{
-        const col=document.createElement('div'); col.className='col-12 col-md-6 col-lg-4';
-        col.innerHTML = `
-          <div class="card h-100 shadow-sm">
-            ${a.hero ? `<img src="${a.hero}" class="card-img-top" alt="">` : ``}
-            <div class="card-body">
-              <div class="d-flex justify-content-between align-items-start">
-                <h5 class="card-title ${a.featured?'badge-star':''}">${a.title}</h5>
-                <span class="date">${formatDate(a.date)}</span>
+        $list.innerHTML = items.map(it => {
+          const img = it.image || FALLBACK;
+          const date = it.date ? new Date(it.date).toLocaleDateString() : '';
+          const cats = (it.categories||[]).map(c=>`<span class="pill">${c}</span>`).join(' ');
+          const url = `/newsletter/article.html?slug=${encodeURIComponent(it.slug)}${location.search ? '&ref='+encodeURIComponent(location.search.slice(1)) : ''}`;
+          return `
+            <article class="card" role="listitem">
+              <img class="thumb" src="${img}" alt="${it.imageAlt || 'Article image'}"
+                   onerror="this.onerror=null;this.src='${FALLBACK}'" />
+              <div>
+                <h2 class="title">${it.title || 'Untitled'}</h2>
+                <div class="meta">
+                  ${date ? `<time datetime="${it.date}">${date}</time>` : ''}
+                  ${cats}
+                </div>
+                <p class="excerpt">${it.excerpt || ''}</p>
+                <div class="row">
+                  <a class="btn" href="${url}">Read more</a>
+                </div>
               </div>
-              <p class="card-text">${a.summary||''}</p>
-              <div class="mb-2">
-                ${(a.categories||[]).map(c=>`<span class="badge text-bg-light border me-1">#${c}</span>`).join('')}
-              </div>
-              <a class="btn btn-sm btn-primary" href="./article.html?slug=${encodeURIComponent(a.slug)}&lang=${encodeURIComponent(LIST_LANG)}">Read</a>
-            </div>
-          </div>`;
-        grid.appendChild(col);
-      });
-      setStatus(list.length ? '' : 'No articles match your filters.');
-    }
+            </article>
+          `;
+        }).join('');
 
-    async function load() {
-      setStatus('Loading articles…');
-      let gh = null, slugs = SLUGS;
-      if (!slugs) {
-        gh = detectGhRepo();
-        if (gh) {
-          try {
-            slugs = await ghListArticles(gh);
-          } catch (e) {
-            // API failed (private repo or rate limit) — fall back to manual list
-            console.warn('GitHub API fallback:', e);
-            slugs = []; // Leave empty → show helpful status
-            setStatus('Could not auto-discover articles. Set SLUGS in index.html.');
-          }
-        } else {
-          // Not on GitHub Pages
-          slugs = []; // Set your manual list above
-          setStatus('Not on GitHub Pages. Set SLUGS in index.html.');
-        }
+        document.getElementById('app').setAttribute('aria-busy','false');
+      } catch (e){
+        $list.innerHTML = `<p>Could not load articles.</p>`;
+        console.error('Manifest load error', e);
       }
-
-      // Fetch all articles and build metadata
-      const metas = [];
-      for (const slug of slugs) {
-        try {
-          const a = await fetchArticle(slug, gh);
-          const meta = articleToMeta(a);
-          metas.push(meta);
-          // collect tags
-          [...(meta.categories||[]), ...(meta.tags||[])].forEach(t => state.tags.add(t));
-        } catch (e) {
-          console.warn('Failed to load', slug, e);
-        }
-      }
-
-      state.data = metas.sort(byDate);
-      renderTags();
-      state.fuse = new Fuse(state.data, { keys:['title','summary','categories','tags'], threshold:0.35, ignoreLocation:true });
-      document.getElementById('search').addEventListener('input', applyFilters);
-      renderCards(state.data);
-      setStatus('');
-    }
-
-    load();
+    })();
   </script>
 </body>
 </html>
