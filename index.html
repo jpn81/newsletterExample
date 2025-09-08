@@ -1,48 +1,51 @@
+<!doctype html>
+<html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Newsletter — Latest Articles</title>
-  <link rel="stylesheet" href="assets/styles.css?v=1">
+  <title>News</title>
+  <link rel="stylesheet" href="assets/styles.css?v=2">
 </head>
-
-
 <body>
   <!-- Shared Volvo top bar -->
- <!-- Shared Volvo-style top bar -->
-<header class="vg-header">
-  <div class="vg-header__inner">
-   <div class="vg-brand">
-  <a class="vg-home" href="./" aria-label="Newsletter home">
-    <img class="vg-logo" src="assets/volvo-logo.svg" alt="Volvo">
-    <span class="vg-title">Competence Development &amp; Delivery</span>
-  </a>
-</div>
+  <header class="vg-header">
+    <div class="vg-header__inner">
+      <div class="vg-brand">
+        <img class="vg-logo" src="assets/volvo-logo.svg" alt="Volvo">
+        <span class="vg-title">Competence Development &amp; Delivery</span>
+      </div>
+    </div>
+  </header>
 
+  <main class="nl-container">
+    <!-- Title + search + tags -->
+    <div class="nl-hero">
+      <h1 class="nl-title">News</h1>
+      <div class="nl-controls">
+        <div class="nl-search-wrap">
+          <label class="sr-only" for="nl-search">Search articles</label>
+          <input id="nl-search" class="nl-search" type="search"
+                 placeholder="Search articles…" autocomplete="off">
+        </div>
+        <div class="nl-tags">
+          <!-- Tag filter checkboxes (populate dynamically if you want) -->
+          <label class="nl-chip">
+            <input type="checkbox" value="Technology"> Technology
+          </label>
+          <label class="nl-chip">
+            <input type="checkbox" value="Innovation"> Innovation
+          </label>
+          <label class="nl-chip">
+            <input type="checkbox" value="Features"> Features
+          </label>
+        </div>
+      </div>
+    </div>
 
-    <!-- Search slot (works on landing, harmless on article) -->
-    <form class="vg-search" role="search" action="javascript:void(0)">
-  <label class="sr-only" for="nl-search">Search articles</label>
-  <input id="nl-search" type="search" placeholder="Search articles…" autocomplete="off">
-</form>
-
-  </div>
-</header>
-
-  <!-- Breadcrumbs: landing = just "Newsletter" -->
- <nav class="vg-breadcrumbs" aria-label="Breadcrumb">
-  <ol>
-    <li aria-current="page">Newsletter</li>
-  </ol>
-</nav>
-
-
-  <main class="wrap">
-    <h1>Newsletter</h1>
-    <p class="sub">Latest articles, newest first.</p>
-    <div id="list" class="grid" role="list"></div>
+    <!-- Article grid will be rendered here -->
+    <div id="nl-grid" class="nl-grid"></div>
   </main>
 
-  <script src="assets/index.js?v=1"></script>   <!-- on index.html -->
-
-
+  <script src="assets/news.js"></script>
 </body>
+</html>
