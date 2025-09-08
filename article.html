@@ -23,11 +23,12 @@
     .inline-img{border:1px solid var(--line);border-radius:10px;overflow:hidden}
     .inline-img img{width:100%;display:block}
     .inline-img figcaption{padding:8px 10px;color:var(--muted);font-size:.9rem}
+    .err{margin-top:12px;padding:10px;border:1px solid #fecaca;background:#fff1f2;border-radius:8px}
   </style>
 </head>
 <body class="page">
   <main class="wrap" id="app" aria-busy="true">
-    <div class="back"><a id="backLink" href="/newsletter/">← Back to Newsletter</a></div>
+    <div class="back"><a id="backLink" href="#">← Back to Newsletter</a></div>
     <article id="article" hidden>
       <header>
         <h1 id="title">Loading…</h1>
@@ -39,26 +40,88 @@
       </header>
       <section id="content" class="body"></section>
     </article>
+    <div id="error" class="err" hidden></div>
   </main>
 
   <script>
     (async function(){
       const params = new URLSearchParams(location.search);
       const slug = params.get('slug');
-      const ref = params.get('ref') || '';
-      const FALLBACK = '/newsletter/_common/assets/fallback.jpg';
+      const ref  = params.get('ref') || '';
+
+      const HERE = new URL('.', location.href);
+      const basePath = HERE.pathname.endsWith('/') ? HERE.pathname : HERE.pathname + '/';
+
+      // Back link (preserve any inbound query)
       const back = document.getElementById('backLink');
-      back.href = '/newsletter/' + (ref ? ('?'+ref) : '');
+      back.href = basePath + (ref ? ('?' + ref) : '');
+
+      // Image fallbacks (inline handler)
+      window.__imgFallback = function(img){
+        const list = (img.dataset.fallback || '').split('|').filter(Boolean);
+        if (list.length){
+          img.onerror = null;
+          img.src = list.shift();
+          img.dataset.fallback = list.join('|');
+        }
+      };
+
+      const $err = document.getElementById('error');
 
       if(!slug){
-        document.getElementById('app').innerHTML = '<p>Missing article slug.</p>';
+        $err.hidden = false;
+        $err.textContent = 'Missing article slug (?slug=...)';
         return;
       }
 
-      const jsonUrl = `/newsletter/articles/${encodeURIComponent(slug)}/article.json`;
+      // Try JSON first, then JS article if JSON blocked
+      async function loadJSON(urls){
+        for (const url of urls){
+          try{
+            const res = await fetch(url, { cache:'no-cache' });
+            if (res.ok) return await res.json();
+          }catch(e){}
+        }
+        throw new Error('All JSON candidates failed');
+      }
+      async function loadJSArticle(urls){
+        for (const url of urls){
+          try{
+            await new Promise((resolve, reject)=>{
+              const s = document.createElement('script');
+              s.src = url + (url.includes('?') ? '&' : '?') + 'v=' + Date.now();
+              s.onload = ()=> resolve();
+              s.onerror = ()=> reject();
+              document.head.appendChild(s);
+            });
+            if (window.NEWS_ARTICLE && typeof window.NEWS_ARTICLE === 'object') return window.NEWS_ARTICLE;
+          }catch(e){}
+        }
+        throw new Error('All JS article candidates failed');
+      }
+
+      const jsonCandidates = [
+        basePath + 'articles/' + encodeURIComponent(slug) + '/article.json',
+        basePath + '/articles/' + encodeURIComponent(slug) + '/article.json',
+        '/newsletter/articles/' + encodeURIComponent(slug) + '/article.json'
+      ];
+      const jsCandidates = [
+        basePath + 'articles/' + encodeURIComponent(slug) + '/article.js',
+        basePath + '/articles/' + encodeURIComponent(slug) + '/article.js',
+        '/newsletter/articles/' + encodeURIComponent(slug) + '/article.js'
+      ];
+      const fallbackImages = [
+        basePath + '_common/assets/fallback.jpg',
+        '/newsletter/_common/assets/fallback.jpg'
+      ];
+
       try {
-        const res = await fetch(jsonUrl, {cache:'no-cache'});
-        const data = await res.json();
+        let data;
+        try {
+          data = await loadJSON(jsonCandidates);
+        } catch {
+          data = await loadJSArticle(jsCandidates);
+        }
 
         document.title = data.title || 'Article';
 
@@ -66,18 +129,22 @@
         document.getElementById('title').textContent = data.title || 'Untitled';
         if (data.date){
           const d = new Date(data.date);
-          document.getElementById('date').textContent = d.toLocaleDateString();
-          document.getElementById('date').setAttribute('datetime', data.date);
+          const el = document.getElementById('date');
+          el.textContent = d.toLocaleDateString();
+          el.setAttribute('datetime', data.date);
         }
         document.getElementById('cats').innerHTML = (data.categories||[]).map(c=>`<span>• ${c}</span>`).join(' ');
 
         // Hero
         const hero = document.getElementById('hero');
-        hero.src = (data.hero && data.hero.image) || FALLBACK;
+        const heroSrc = (data.hero && data.hero.image) ||
+                        (basePath + 'articles/' + encodeURIComponent(slug) + '/assets/hero.jpg');
+        hero.src = heroSrc;
         hero.alt = (data.hero && data.hero.alt) || 'Article image';
-        hero.onerror = () => { hero.onerror=null; hero.src = FALLBACK; };
+        hero.setAttribute('data-fallback', [heroSrc, ...fallbackImages].join('|'));
+        hero.onerror = ()=> window.__imgFallback(hero);
 
-        // Body (supports simple blocks)
+        // Body blocks
         const body = document.getElementById('content');
         const blocks = data.body || [];
         body.innerHTML = blocks.map(b=>{
@@ -89,10 +156,13 @@
             case 'ul': return `<ul>${(b.items||[]).map(i=>`<li>${i}</li>`).join('')}</ul>`;
             case 'ol': return `<ol>${(b.items||[]).map(i=>`<li>${i}</li>`).join('')}</ol>`;
             case 'img': {
-              const src = b.src || FALLBACK;
+              const src = b.src ||
+                (basePath + 'articles/' + encodeURIComponent(slug) + '/assets/' + (b.file || 'image.jpg'));
               const alt = b.alt || '';
               const cap = b.caption ? `<figcaption>${b.caption}</figcaption>` : '';
-              return `<figure class="inline-img"><img src="${src}" alt="${alt}" onerror="this.onerror=null;this.src='${FALLBACK}'" />${cap}</figure>`;
+              const pipe = [src, ...fallbackImages].join('|');
+              return `<figure class="inline-img"><img src="${src}" alt="${alt}"
+                        data-fallback="${pipe}" onerror="window.__imgFallback(this)" />${cap}</figure>`;
             }
             case 'code': {
               const lang = b.lang || '';
@@ -106,8 +176,9 @@
         document.getElementById('article').hidden = false;
         document.getElementById('app').setAttribute('aria-busy','false');
       } catch (e){
-        document.getElementById('app').innerHTML = `<p>Could not load this article.</p>`;
-        console.error('Article load error', e);
+        $err.hidden = false;
+        $err.textContent = 'Could not load this article. ' + e.message;
+        console.error(e);
       }
     })();
   </script>
