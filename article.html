@@ -27,6 +27,20 @@
     const slug = qs.get('slug');
     const lang = (qs.get('lang') || 'en').toLowerCase();
     const fmt = d => `${d.slice(0,4)}-${d.slice(4,6)}-${d.slice(6,8)}`;
+const DEFAULT_HERO = '/assets/img/placeholder-1200x630.jpg';
+
+function firstBodyImage(article, lang) {
+  const L = article.locales?.[lang] || article.locales?.en || Object.values(article.locales||{})[0] || {};
+  const img = (L.body || []).find(b => b.type === 'img' && b.src && b.src.trim());
+  return img?.src || null;
+}
+
+function pickHero(article, lang) {
+  const direct = article.hero?.image && article.hero.image.trim() ? article.hero.image : null;
+  return direct || firstBodyImage(article, lang) || DEFAULT_HERO;
+}
+
+function onImgError(e) { e.target.src = DEFAULT_HERO; }
 
     async function load(){
       if(!slug){ return setHTML('<p>Missing ?slug=…</p>'); }
