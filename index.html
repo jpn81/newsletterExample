@@ -20,7 +20,7 @@
     .btn{appearance:none;border:1px solid var(--line);background:#fff;border-radius:10px;padding:8px 12px;text-decoration:none;color:var(--brand);font-weight:600}
     .btn:hover{box-shadow:0 1px 6px rgba(0,0,0,.08)}
     .pill{border:1px dashed var(--line);border-radius:999px;padding:4px 10px;font-size:.85rem;color:var(--muted)}
-    .sr{position:absolute;width:1px;height:1px;margin:-1px;overflow:hidden;clip:rect(0,0,0,0)}
+    .err{margin-top:12px;padding:10px;border:1px solid #fecaca;background:#fff1f2;border-radius:8px}
     @media (max-width:580px){.card{grid-template-columns:1fr}.thumb{max-height:220px}}
   </style>
 </head>
@@ -29,34 +29,111 @@
     <h1>Newsletter</h1>
     <p class="sub">Latest articles, newest first.</p>
     <div id="list" class="grid" role="list"></div>
+    <div id="error" class="err" hidden></div>
   </main>
 
   <script>
     (async function(){
       const $list = document.getElementById('list');
-      const FALLBACK = '/newsletter/_common/assets/fallback.jpg';
-      const source = '/newsletter/articles/manifest.json';
+      const $err  = document.getElementById('error');
+
+      // Directory of THIS page, e.g. /group/guest/newsletter/
+      const HERE = new URL('.', location.href);
+      const basePath = HERE.pathname.endsWith('/') ? HERE.pathname : HERE.pathname + '/';
+
+      // Fallback image candidates (try relative first, then absolute-ish backup)
+      const FALLBACKS = [
+        basePath + '_common/assets/fallback.jpg',
+        '/newsletter/_common/assets/fallback.jpg'
+      ];
+
+      // Try a list of JSON URLs until one works
+      async function loadJSON(candidates){
+        for (const url of candidates){
+          try{
+            const res = await fetch(url, { cache: 'no-cache' });
+            if (res.ok) return await res.json();
+          }catch(e){ /* continue */ }
+        }
+        throw new Error('All JSON candidates failed: ' + candidates.join(', '));
+      }
+
+      // If JSON is blocked by host, load a JS manifest that sets window.NEWS_MANIFEST
+      async function loadJSManifest(candidates){
+        for (const url of candidates){
+          try{
+            await new Promise((resolve, reject)=>{
+              const s = document.createElement('script');
+              s.src = url + (url.includes('?') ? '&' : '?') + 'v=' + Date.now();
+              s.onload = ()=> resolve();
+              s.onerror = ()=> reject();
+              document.head.appendChild(s);
+            });
+            if (Array.isArray(window.NEWS_MANIFEST)) return window.NEWS_MANIFEST;
+          }catch(e){ /* try next */ }
+        }
+        throw new Error('All JS manifest candidates failed: ' + candidates.join(', '));
+      }
+
+      // Resolve the first working fallback image on error (can try multiple)
+      window.__imgFallback = function(img){
+        const list = (img.dataset.fallback || '').split('|').filter(Boolean);
+        if (list.length){
+          img.onerror = null;     // stop infinite loops
+          img.src = list.shift(); // try next
+          img.dataset.fallback = list.join('|');
+        }
+      };
 
       try {
-        const res = await fetch(source, {cache:'no-cache'});
-        const items = await res.json();
+        // primary: JSON; secondary: JS
+        const manifestJSONPaths = [
+          basePath + 'articles/manifest.json',
+          basePath + '/articles/manifest.json',
+          '/newsletter/articles/manifest.json'
+        ];
+        const manifestJSPaths = [
+          basePath + 'articles/manifest.js',
+          basePath + '/articles/manifest.js',
+          '/newsletter/articles/manifest.js'
+        ];
 
-        // sort newest → oldest by ISO date (YYYY-MM-DD)
+        let items;
+        try {
+          items = await loadJSON(manifestJSONPaths);
+        } catch {
+          items = await loadJSManifest(manifestJSPaths);
+        }
+
+        // sort newest → oldest (expects YYYY-MM-DD)
         items.sort((a,b)=> (b.date || '').localeCompare(a.date || ''));
 
+        // preserve any inbound query (so Back link in article can return with it)
+        const ref = location.search ? '&ref=' + encodeURIComponent(location.search.slice(1)) : '';
+
         $list.innerHTML = items.map(it => {
-          const img = it.image || FALLBACK;
-          const date = it.date ? new Date(it.date).toLocaleDateString() : '';
+          const slug = it.slug || '';
+          // Allow manifest to omit "image" — we assume /articles/<slug>/assets/hero.jpg
+          const defaultImg = basePath + 'articles/' + encodeURIComponent(slug) + '/assets/hero.jpg';
+          const img = it.image || defaultImg;
+
+          const dateStr = it.date ? new Date(it.date).toLocaleDateString() : '';
           const cats = (it.categories||[]).map(c=>`<span class="pill">${c}</span>`).join(' ');
-          const url = `/newsletter/article.html?slug=${encodeURIComponent(it.slug)}${location.search ? '&ref='+encodeURIComponent(location.search.slice(1)) : ''}`;
+          const url = basePath + 'article.html?slug=' + encodeURIComponent(slug) + ref;
+
+          const fallbacksPipe = [img, ...FALLBACKS].join('|');
+
           return `
             <article class="card" role="listitem">
-              <img class="thumb" src="${img}" alt="${it.imageAlt || 'Article image'}"
-                   onerror="this.onerror=null;this.src='${FALLBACK}'" />
+              <img class="thumb"
+                   src="${img}"
+                   alt="${it.imageAlt || 'Article image'}"
+                   data-fallback="${fallbacksPipe}"
+                   onerror="window.__imgFallback(this)" />
               <div>
                 <h2 class="title">${it.title || 'Untitled'}</h2>
                 <div class="meta">
-                  ${date ? `<time datetime="${it.date}">${date}</time>` : ''}
+                  ${dateStr ? `<time datetime="${it.date}">${dateStr}</time>` : ''}
                   ${cats}
                 </div>
                 <p class="excerpt">${it.excerpt || ''}</p>
@@ -70,8 +147,10 @@
 
         document.getElementById('app').setAttribute('aria-busy','false');
       } catch (e){
-        $list.innerHTML = `<p>Could not load articles.</p>`;
-        console.error('Manifest load error', e);
+        $list.innerHTML = '';
+        $err.hidden = false;
+        $err.textContent = 'Could not load articles. Check manifest.json or manifest.js paths. ' + e.message;
+        console.error(e);
       }
     })();
   </script>
