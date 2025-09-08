@@ -8,13 +8,22 @@
 </head>
 <body>
   <!-- Shared Volvo top bar -->
-  <header class="vg-header">
-    <div class="vg-header__inner">
-      <a class="vg-logo" href="index.html" aria-label="Newsletter home">
-        <img src="assets/volvo-logo.svg" alt="Volvo" />
-      </a>
+  <!-- Shared Volvo-style top bar -->
+<header class="vg-header">
+  <div class="vg-header__inner">
+    <div class="vg-brand">
+      <img class="vg-logo" src="assets/volvo-logo.svg" alt="Volvo">
+      <span class="vg-title">Competence Development &amp; Delivery</span>
     </div>
-  </header>
+
+    <!-- Search slot (works on landing, harmless on article) -->
+    <form class="vg-search" role="search" action="javascript:void(0)">
+      <label class="sr-only" for="search">Search articles</label>
+      <input id="search" type="search" placeholder="Search articles…" autocomplete="off">
+    </form>
+  </div>
+</header>
+
 
   <!-- Breadcrumbs: Newsletter › {Article Title} -->
   <nav class="vg-breadcrumbs" aria-label="Breadcrumb">
