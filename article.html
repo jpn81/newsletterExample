@@ -4,29 +4,10 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Article</title>
-  <style>
-    :root{--brand:#081A35;--text:#0f172a;--muted:#475569;--line:#e5e7eb}
-    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,Noto Sans;color:var(--text);margin:0;background:#fff}
-    .wrap{max-width:860px;margin:0 auto;padding:22px}
-    .back{display:inline-flex;gap:8px;align-items:center;margin-bottom:10px}
-    .back a{color:var(--brand);text-decoration:none;border:1px solid var(--line);padding:6px 10px;border-radius:10px;background:#fff}
-    .back a:hover{box-shadow:0 1px 6px rgba(0,0,0,.08)}
-    h1{margin:.2rem 0 .5rem;font-size:clamp(1.6rem,1rem+2vw,2.2rem)}
-    .meta{display:flex;gap:10px 14px;flex-wrap:wrap;color:var(--muted)}
-    .hero{margin:14px 0 18px}
-    .hero img{width:100%;height:auto;display:block;border-radius:12px;border:1px solid var(--line);object-fit:cover}
-    .body{display:grid;gap:14px}
-    .body p{margin:0;line-height:1.7}
-    .body h2{margin:12px 0 2px;font-size:1.25rem}
-    .body h3{margin:10px 0 0;font-size:1.1rem}
-    .body blockquote{margin:0;padding:10px 12px;border-left:4px solid var(--brand);background:#f8fafc;border-radius:6px}
-    .inline-img{border:1px solid var(--line);border-radius:10px;overflow:hidden}
-    .inline-img img{width:100%;display:block}
-    .inline-img figcaption{padding:8px 10px;color:var(--muted);font-size:.9rem}
-  </style>
+  <link rel="stylesheet" href="./assets/styles.css">
 </head>
 <body>
-  <main class="wrap" id="app">
+  <main class="wrap">
     <div class="back"><a href="./index.html">← Back to Newsletter</a></div>
     <article id="article" hidden>
       <header>
@@ -41,57 +22,6 @@
     </article>
   </main>
 
-  <script>
-    (async () => {
-      const params = new URLSearchParams(location.search);
-      const slug = params.get('slug');
-      if(!slug){ document.getElementById('app').innerHTML = '<p>Missing ?slug=…</p>'; return; }
-
-      const res = await fetch(`./articles/${encodeURIComponent(slug)}/article.json`, {cache:'no-cache'});
-      const data = await res.json();
-
-      document.title = data.title || 'Article';
-      document.getElementById('title').textContent = data.title || 'Untitled';
-
-      if (data.date){
-        const d = new Date(data.date);
-        const t = document.getElementById('date');
-        t.textContent = d.toLocaleDateString();
-        t.setAttribute('datetime', data.date);
-      }
-      document.getElementById('cats').innerHTML = (data.categories||[]).map(c=>`<span>• ${c}</span>`).join(' ');
-
-      const hero = document.getElementById('hero');
-      hero.src = data.hero?.image || '';
-      hero.alt = data.hero?.alt || '';
-
-      const blocks = data.body || [];
-      const html = blocks.map(b=>{
-        switch(b.type){
-          case 'p': return `<p>${b.text||''}</p>`;
-          case 'h2': return `<h2>${b.text||''}</h2>`;
-          case 'h3': return `<h3>${b.text||''}</h3>`;
-          case 'blockquote': return `<blockquote>${b.text||''}</blockquote>`;
-          case 'ul': return `<ul>${(b.items||[]).map(i=>`<li>${i}</li>`).join('')}</ul>`;
-          case 'ol': return `<ol>${(b.items||[]).map(i=>`<li>${i}</li>`).join('')}</ol>`;
-          case 'img': {
-            const src = b.src || '';
-            const alt = b.alt || '';
-            const cap = b.caption ? `<figcaption>${b.caption}</figcaption>` : '';
-            return `<figure class="inline-img"><img src="${src}" alt="${alt}" />${cap}</figure>`;
-          }
-          case 'code': {
-            const code = (b.code||'').replace(/&/g,'&amp;').replace(/</g,'&lt;');
-            const lang = b.lang || '';
-            return `<pre aria-label="${lang} code"><code>${code}</code></pre>`;
-          }
-          default: return '';
-        }
-      }).join('');
-
-      document.getElementById('content').innerHTML = html;
-      document.getElementById('article').hidden = false;
-    })();
-  </script>
+  <script src="./assets/article.js"></script>
 </body>
 </html>
